@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>谁是卧底 - 在线版</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                50: '#ecfdf3',
+                100: '#d1fadf',
+                400: '#4ade80',
+                500: '#22c55e',
+                600: '#16a34a'
+              }
+            }
+          }
+        }
+      };
+    </script>
+    <style>
+      body {
+        min-height: 100vh;
+      }
+      .scroll-thin::-webkit-scrollbar {
+        width: 6px;
+      }
+      .scroll-thin::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .scroll-thin::-webkit-scrollbar-thumb {
+        background: rgba(148, 163, 184, 0.6);
+        border-radius: 999px;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-slate-950 bg-[radial-gradient(circle_at_top,_#1f2937_0,_#020617_45%)] text-slate-100 flex items-stretch justify-center p-4"
+  >
+    <div class="w-full max-w-5xl">
+      <!-- 单一控制台 -->
+      <div
+        class="rounded-2xl border border-slate-700/70 bg-slate-950/80 shadow-2xl shadow-black/60 backdrop-blur-2xl px-4 py-4 md:px-6 md:py-5 flex flex-col gap-4"
+      >
+        <!-- 顶部信息 -->
+        <div
+          class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between border-b border-slate-800/70 pb-3"
+        >
+          <div>
+            <div class="text-lg font-semibold tracking-wide">
+              谁是卧底 · 控制台
+            </div>
+            <div class="mt-0.5 text-xs text-slate-400">
+              随机词语 · 轮流发言 · 在线投票
+            </div>
+          </div>
+          <div class="flex flex-col items-end gap-1">
+            <div
+              id="connectionStatus"
+              class="px-2.5 py-0.5 rounded-full text-xs border border-slate-500/70 text-slate-300 bg-slate-900/80"
+            >
+              未连接
+            </div>
+            <div
+              id="selfInfo"
+              class="px-2.5 py-0.5 rounded-full text-xs border border-slate-500/70 text-slate-300 bg-slate-900/80"
+            >
+              未加入任何房间
+            </div>
+          </div>
+        </div>
+
+        <!-- 房间设置 -->
+        <div
+          class="rounded-xl border border-dashed border-slate-700/80 bg-gradient-to-br from-slate-900/90 to-slate-950/90 p-3"
+        >
+          <div
+            class="text-[11px] uppercase tracking-[0.2em] text-slate-400 mb-2"
+          >
+            房间
+          </div>
+          <div class="flex flex-col gap-2">
+            <div class="flex flex-col md:flex-row gap-2">
+              <div class="flex-1 flex flex-col gap-1.5">
+                <label class="text-xs text-slate-400">昵称</label>
+                <input
+                  id="nicknameInput"
+                  placeholder="输入你的昵称"
+                  class="w-full rounded-full border border-slate-600/70 bg-slate-900/80 px-3 py-1.5 text-sm outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500/60"
+                />
+              </div>
+              <div class="flex-1 flex flex-col gap-1.5">
+                <label class="text-xs text-slate-400">当前房间号</label>
+                <input
+                  id="gameIdDisplay"
+                  placeholder="还未加入"
+                  readonly
+                  class="w-full cursor-default rounded-full border border-slate-700/70 bg-slate-900/60 px-3 py-1.5 text-sm text-slate-400"
+                />
+              </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row gap-2 items-end">
+              <div class="flex-1 flex flex-col gap-1.5">
+                <label class="text-xs text-slate-400">加入已有房间</label>
+                <input
+                  id="joinGameIdInput"
+                  placeholder="输入房间号"
+                  class="w-full rounded-full border border-slate-600/70 bg-slate-900/80 px-3 py-1.5 text-sm outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500/60"
+                />
+              </div>
+              <!-- 预留的隐藏输入，仅为兼容 JS，不对用户显示 -->
+              <input
+                id="wordCommonInput"
+                type="hidden"
+              />
+              <input
+                id="wordUndercoverInput"
+                type="hidden"
+              />
+              <button
+                id="createGameBtn"
+                class="px-3 py-1.5 rounded-full bg-gradient-to-r from-brand-500 to-brand-600 text-xs font-medium text-emerald-950 shadow-lg shadow-emerald-500/40 hover:shadow-xl hover:shadow-emerald-500/50 transition"
+              >
+                创建房间（随机词语）
+              </button>
+              <button
+                id="joinGameBtn"
+                class="px-3 py-1.5 rounded-full border border-brand-500/70 text-xs font-medium text-brand-400 bg-transparent hover:bg-brand-500/10 transition"
+              >
+                加入房间
+              </button>
+              <button
+                id="leaveGameBtn"
+                class="px-3 py-1.5 rounded-full border border-red-500/70 text-xs font-medium text-red-300 bg-transparent hover:bg-red-500/10 transition disabled:opacity-40 disabled:cursor-default"
+                disabled
+              >
+                离开房间
+              </button>
+            </div>
+
+            <div
+              id="setupError"
+              class="hidden mt-1.5 rounded-lg border border-red-400/60 bg-red-500/10 px-2.5 py-1.5 text-xs text-red-300"
+            ></div>
+
+            <div class="mt-1 text-[11px] text-slate-400">
+              提示：创建房间后，房主点击"更换词语"可随机分配词语给所有玩家；玩家只需记住自己的词语并按顺序发言。
+            </div>
+          </div>
+        </div>
+
+        <!-- 状态 & 词语 -->
+        <div
+          class="rounded-xl border border-slate-800/80 bg-gradient-to-br from-emerald-900/40 via-slate-950/80 to-slate-950/90 p-3"
+        >
+          <div
+            class="text-[11px] uppercase tracking-[0.2em] text-slate-400 mb-2"
+          >
+            游戏状态
+          </div>
+          <div
+            class="flex flex-col gap-2.5 rounded-2xl border border-emerald-500/40 bg-[radial-gradient(circle_at_left,_#065f46_0,_#020617_70%)] px-3 py-2"
+          >
+            <div
+              class="flex flex-wrap items-center gap-3 text-xs border-b border-emerald-500/40 pb-1.5 mb-1.5"
+            >
+              <div
+                id="statusPill"
+                data-status="waiting"
+                class="px-2 py-0.5 rounded-full border border-yellow-400/60 bg-yellow-500/10 text-[10px] font-medium tracking-[0.2em] text-yellow-300"
+              >
+                等待中
+              </div>
+              <div class="text-slate-200">
+                房间号：
+                <span id="statusGameId" class="text-slate-400">-</span>
+              </div>
+              <div class="text-slate-200">
+                当前轮次：
+                <span id="statusRound" class="text-slate-400">-</span>
+              </div>
+              <div class="text-slate-200">
+                阶段：
+                <span id="statusPhase" class="text-slate-400">-</span>
+              </div>
+              <div class="text-slate-200">
+                房主：
+                <span id="statusHost" class="text-slate-400">-</span>
+              </div>
+            </div>
+            <div
+              class="flex flex-wrap items-center justify-end gap-2 text-[11px]"
+            >
+              <button
+                id="rerollWordsBtn"
+                disabled
+                class="px-3 py-1.5 rounded-full border border-emerald-400/70 bg-emerald-500/10 text-emerald-100 hover:bg-emerald-500/25 disabled:opacity-40 disabled:cursor-default"
+              >
+                更换词语
+              </button>
+              <button
+                id="startGameBtn"
+                disabled
+                class="px-3 py-1.5 rounded-full border border-slate-200/80 bg-slate-50 text-slate-900 text-xs font-medium disabled:opacity-50 disabled:cursor-default hover:bg-slate-200/90"
+              >
+                开始游戏
+              </button>
+            </div>
+          </div>
+
+          <div
+            id="wordArea"
+            class="hidden mt-2.5 flex items-center justify-between gap-3 rounded-xl border border-emerald-400/70 bg-[radial-gradient(circle_at_top_left,_#064e3b_0,_#020617_60%)] px-3 py-2.5"
+          >
+            <div>
+              <div class="text-xs text-emerald-100/90 mb-1">你的词语</div>
+              <div id="wordText" class="text-lg font-semibold tracking-[0.15em]">
+                -
+              </div>
+            </div>
+            <div
+              id="wordRole"
+              class="text-[11px] uppercase tracking-[0.2em] text-emerald-100"
+            >
+              -
+            </div>
+          </div>
+          <div
+            id="wordHint"
+            class="mt-2 text-[11px] text-slate-400"
+          >
+            加入房间后，房主点击"更换词语"即可将词语分配给所有玩家；每位玩家只能看到自己的词语。
+          </div>
+          <div
+            id="wordPreviewArea"
+            class="mt-2 text-[11px] text-emerald-200/90 hidden"
+          >
+            当前预设词语（仅房主可见）：<span id="wordPreviewText"></span>
+          </div>
+          <div
+            id="turnHint"
+            class="mt-1 text-[11px] text-slate-400"
+          ></div>
+        </div>
+
+        <!-- 玩家 & 聊天 两列布局 -->
+        <div class="grid gap-3 md:grid-cols-[minmax(0,1.1fr)_minmax(0,1.2fr)]">
+          <!-- 玩家 / 投票 / 发言顺序 -->
+          <div
+            class="rounded-xl border border-slate-800/80 bg-gradient-to-br from-slate-900/80 to-slate-950/90 p-3 flex flex-col"
+          >
+            <div
+              class="text-[11px] uppercase tracking-[0.2em] text-slate-400 mb-2 flex items-center justify-between"
+            >
+              <span>玩家 / 投票</span>
+              <span class="text-[10px] text-slate-500"
+                >发言按顺序轮流，只有轮到的玩家可以发言</span
+              >
+            </div>
+            <div
+              id="playersList"
+              class="scroll-thin max-h-56 overflow-y-auto pr-1 space-y-1.5 text-sm"
+            ></div>
+          </div>
+
+          <!-- 聊天 -->
+          <div
+            class="rounded-xl border border-slate-800/80 bg-slate-950/90 p-3 flex flex-col"
+          >
+            <div
+              class="text-[11px] uppercase tracking-[0.2em] text-slate-400 mb-2 flex items-center justify-between"
+            >
+              <span>实时聊天</span>
+              <span
+                id="chatHint"
+                class="text-[10px] text-slate-500"
+              ></span>
+            </div>
+            <div
+              id="chatList"
+              class="scroll-thin flex-1 max-h-[260px] min-h-[180px] overflow-y-auto rounded-xl border border-slate-800/80 bg-gradient-to-b from-slate-950/90 to-slate-950/95 px-2.5 py-2 mb-2"
+            ></div>
+            <div class="mt-1 flex gap-2">
+              <input
+                id="chatInput"
+                placeholder="按回车发送消息"
+                class="flex-1 rounded-full border border-slate-600/80 bg-slate-900/90 px-3 py-1.5 text-sm outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500/60"
+              />
+              <div class="flex gap-2">
+                <button
+                  id="chatSendBtn"
+                  class="px-3 py-1.5 rounded-full bg-gradient-to-r from-brand-500 to-brand-600 text-xs font-medium text-emerald-950 shadow-lg shadow-emerald-500/40 hover:shadow-xl hover:shadow-emerald-500/50 transition"
+                >
+                  发送
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 前端逻辑 -->
+    <script>
+      const state = {
+        gameId: null,
+        playerId: null,
+        nickname: null,
+        ws: null,
+        word: null,
+        role: null,
+        gameStatus: 'waiting',
+        phase: 'waiting',
+        round: 1,
+        players: [],
+        chat: [],
+        currentSpeakerId: null,
+        myVoteTargetId: null,
+        hostId: null,
+        previewCommon: null,
+        previewUndercover: null
+      };
+
+      const els = {
+        nicknameInput: document.getElementById('nicknameInput'),
+        gameIdDisplay: document.getElementById('gameIdDisplay'),
+        wordCommonInput: document.getElementById('wordCommonInput'),
+        wordUndercoverInput: document.getElementById('wordUndercoverInput'),
+        joinGameIdInput: document.getElementById('joinGameIdInput'),
+        createGameBtn: document.getElementById('createGameBtn'),
+        joinGameBtn: document.getElementById('joinGameBtn'),
+        leaveGameBtn: document.getElementById('leaveGameBtn'),
+        setupError: document.getElementById('setupError'),
+        connectionStatus: document.getElementById('connectionStatus'),
+        statusPill: document.getElementById('statusPill'),
+        statusGameId: document.getElementById('statusGameId'),
+        statusRound: document.getElementById('statusRound'),
+        statusPhase: document.getElementById('statusPhase'),
+        statusHost: document.getElementById('statusHost'),
+        startGameBtn: document.getElementById('startGameBtn'),
+        rerollWordsBtn: document.getElementById('rerollWordsBtn'),
+        wordArea: document.getElementById('wordArea'),
+        wordText: document.getElementById('wordText'),
+        wordRole: document.getElementById('wordRole'),
+        wordHint: document.getElementById('wordHint'),
+        wordPreviewArea: document.getElementById('wordPreviewArea'),
+        wordPreviewText: document.getElementById('wordPreviewText'),
+        playersList: document.getElementById('playersList'),
+        chatList: document.getElementById('chatList'),
+        chatInput: document.getElementById('chatInput'),
+        chatSendBtn: document.getElementById('chatSendBtn'),
+        chatHint: document.getElementById('chatHint'),
+        turnHint: document.getElementById('turnHint'),
+        selfInfo: document.getElementById('selfInfo')
+      };
+
+      function setError(msg) {
+        if (!msg) {
+          els.setupError.classList.add('hidden');
+          els.setupError.textContent = '';
+        } else {
+          els.setupError.classList.remove('hidden');
+          els.setupError.textContent = msg;
+        }
+      }
+
+      function setConnectionStatus(text, ok) {
+        els.connectionStatus.textContent = text;
+        els.connectionStatus.classList.remove(
+          'text-red-300',
+          'border-red-400/70',
+          'text-emerald-300'
+        );
+        if (ok) {
+          els.connectionStatus.classList.add('text-emerald-300');
+        } else {
+          els.connectionStatus.classList.add(
+            'text-red-300',
+            'border-red-400/70'
+          );
+        }
+      }
+
+      function humanPhase(phase) {
+        if (phase === 'speaking') return '发言中';
+        if (phase === 'voting') return '投票中';
+        if (phase === 'ended') return '已结束';
+        if (phase === 'waiting') return '等待开始';
+        return '-';
+      }
+
+      function updateStatusPill(status) {
+        state.gameStatus = status;
+        els.statusPill.dataset.status = status;
+        els.statusPill.classList.remove(
+          'border-yellow-400/60',
+          'bg-yellow-500/10',
+          'text-yellow-300',
+          'border-emerald-400/60',
+          'bg-emerald-500/10',
+          'text-emerald-300',
+          'border-red-400/60',
+          'bg-red-500/10',
+          'text-red-300'
+        );
+        if (status === 'waiting') {
+          els.statusPill.textContent = '等待中';
+          els.statusPill.classList.add(
+            'border-yellow-400/60',
+            'bg-yellow-500/10',
+            'text-yellow-300'
+          );
+        } else if (status === 'playing') {
+          els.statusPill.textContent = '进行中';
+          els.statusPill.classList.add(
+            'border-emerald-400/60',
+            'bg-emerald-500/10',
+            'text-emerald-300'
+          );
+        } else {
+          els.statusPill.textContent = '已结束';
+          els.statusPill.classList.add(
+            'border-red-400/60',
+            'bg-red-500/10',
+            'text-red-300'
+          );
+        }
+      }
+
+      function updateChatControls() {
+        const disableSpeaking =
+          state.gameStatus === 'playing' &&
+          state.phase === 'speaking' &&
+          state.currentSpeakerId &&
+          state.currentSpeakerId !== state.playerId;
+        els.chatInput.disabled = disableSpeaking;
+        els.chatSendBtn.disabled = disableSpeaking;
+        if (disableSpeaking) {
+          els.chatInput.classList.add('opacity-60', 'cursor-not-allowed');
+          els.chatHint.textContent = '当前为轮流发言阶段，只能由轮到的玩家发言。';
+        } else {
+          els.chatInput.classList.remove('opacity-60', 'cursor-not-allowed');
+          els.chatHint.textContent =
+            state.phase === 'voting'
+              ? '当前为投票阶段，大家可以自由讨论。'
+              : '';
+        }
+      }
+
+      function updateTurnControls() {
+        const hint = els.turnHint;
+        if (!hint) return;
+        const isMyTurn =
+          state.gameStatus === 'playing' &&
+          state.phase === 'speaking' &&
+          state.currentSpeakerId &&
+          state.currentSpeakerId === state.playerId;
+        if (isMyTurn) {
+          hint.textContent =
+            '现在轮到你发言，请发送一条消息描述你的词语（发送后自动结束发言）。';
+        } else {
+          if (state.phase === 'speaking') {
+            hint.textContent = '当前为轮流发言阶段，请等待轮到你再发言。';
+          } else if (state.phase === 'voting') {
+            hint.textContent = '当前为投票阶段，请在左侧列表中选择一名玩家投票。';
+          } else {
+            hint.textContent = '';
+          }
+        }
+      }
+
+      async function apiCreateGame() {
+        const name = els.nicknameInput.value.trim();
+        if (!name) {
+          setError('请先输入你的昵称');
+          return;
+        }
+        setError('');
+        try {
+          const res = await fetch('/api/games', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({})
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || '创建房间失败');
+          await apiJoinGameInternal(data.gameId, name);
+        } catch (e) {
+          setError(e.message);
+        }
+      }
+
+      async function apiJoinGame() {
+        const gameId = els.joinGameIdInput.value.trim();
+        const name = els.nicknameInput.value.trim();
+        if (!name) {
+          setError('请先输入你的昵称');
+          return;
+        }
+        if (!gameId) {
+          setError('请输入要加入的房间号');
+          return;
+        }
+        setError('');
+        await apiJoinGameInternal(gameId, name);
+      }
+
+      async function apiJoinGameInternal(gameId, name) {
+        try {
+          const res = await fetch(
+            `/api/games/${encodeURIComponent(gameId)}/join`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ name })
+            }
+          );
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || '加入房间失败');
+
+          state.gameId = data.gameId;
+          state.playerId = data.playerId;
+          state.nickname = name;
+          els.gameIdDisplay.value = data.gameId;
+          els.joinGameIdInput.value = data.gameId;
+          els.statusGameId.textContent = data.gameId;
+          els.selfInfo.textContent = `已加入房间 ${data.gameId} · ${name}`;
+          els.selfInfo.classList.add('text-indigo-200');
+          if (els.leaveGameBtn) {
+            els.leaveGameBtn.disabled = false;
+          }
+
+          connectWs();
+          refreshWord();
+        } catch (e) {
+          setError(e.message);
+        }
+      }
+
+      async function apiStartGame() {
+        if (!state.gameId) return;
+        const isRestart = state.gameStatus === 'ended';
+        try {
+          const path = isRestart ? 'restart' : 'start';
+          const res = await fetch(
+            `/api/games/${encodeURIComponent(state.gameId)}/${path}`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                undercoverCount: 1,
+                playerId: state.playerId
+              })
+            }
+          );
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || '开始游戏失败');
+          await refreshWord();
+        } catch (e) {
+          alert(e.message);
+        }
+      }
+
+      async function apiLeaveGame() {
+        if (!state.gameId || !state.playerId) return;
+        try {
+          const res = await fetch(
+            `/api/games/${encodeURIComponent(state.gameId)}/leave`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ playerId: state.playerId })
+            }
+          );
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || '离开房间失败');
+          // 简单处理：离开后刷新页面，回到初始状态
+          window.location.reload();
+        } catch (e) {
+          alert(e.message);
+        }
+      }
+
+      async function apiRerollWords() {
+        if (!state.gameId || !state.playerId) return;
+        try {
+          const res = await fetch(
+            `/api/games/${encodeURIComponent(state.gameId)}/reroll-words`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ playerId: state.playerId })
+            }
+          );
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || '更换词语失败');
+          // 词语已通过 WebSocket 广播分配给所有玩家，无需额外操作
+        } catch (e) {
+          alert(e.message);
+        }
+      }
+
+      async function refreshWord() {
+        if (!state.gameId || !state.playerId) return;
+        try {
+          const url = `/api/games/${encodeURIComponent(
+            state.gameId
+          )}/word?playerId=${encodeURIComponent(state.playerId)}`;
+          const res = await fetch(url);
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || '获取词语失败');
+          state.word = data.word;
+          state.role = data.role;
+          renderWord();
+        } catch (e) {
+          console.warn(e);
+        }
+      }
+
+      async function refreshPreviewWords() {
+        // 词语已直接分配给玩家，不再需要房主预览
+        renderWordPreview();
+      }
+
+      function connectWs() {
+        if (!state.gameId || !state.playerId) return;
+        if (state.ws) {
+          state.ws.close();
+          state.ws = null;
+        }
+        const proto = location.protocol === 'https:' ? 'wss' : 'ws';
+        const wsUrl = `${proto}://${location.host}?gameId=${encodeURIComponent(
+          state.gameId
+        )}&playerId=${encodeURIComponent(state.playerId)}`;
+        const ws = new WebSocket(wsUrl);
+        state.ws = ws;
+        setConnectionStatus('连接中...', false);
+
+        ws.onopen = () => {
+          setConnectionStatus('已连接', true);
+        };
+
+        ws.onclose = () => {
+          setConnectionStatus('已断开', false);
+        };
+
+        ws.onerror = () => {
+          setConnectionStatus('连接出错', false);
+        };
+
+        ws.onmessage = (ev) => {
+          try {
+            const msg = JSON.parse(ev.data);
+            if (msg.type === 'state') {
+              const g = msg.data;
+              const prevRound = state.round;
+              state.round = g.round;
+              state.players = g.players || [];
+              state.chat = g.chat || [];
+              state.phase = g.phase || 'waiting';
+              state.hostId = g.hostId || null;
+              state.currentSpeakerId = g.currentSpeakerId || null;
+              if (g.round !== prevRound) {
+                state.myVoteTargetId = null;
+              }
+              updateStatusPill(g.status);
+              els.statusRound.textContent = g.round || '-';
+              els.statusPhase.textContent = humanPhase(state.phase);
+              if (els.statusHost) {
+                const hostPlayer =
+                  state.players.find((p) => p.id === state.hostId) || null;
+                els.statusHost.textContent = hostPlayer
+                  ? hostPlayer.name
+                  : '-';
+              }
+              refreshPreviewWords();
+              renderPlayers();
+              renderChat();
+              refreshWord();
+              updateChatControls();
+              updateTurnControls();
+            } else if (msg.type === 'chat') {
+              state.chat.push(msg.data);
+              renderChat(true);
+            }
+          } catch (e) {
+            console.error(e);
+          }
+        };
+      }
+
+      function renderWord() {
+        if (!state.word) {
+          els.wordArea.classList.add('hidden');
+          els.wordHint.classList.remove('hidden');
+          return;
+        }
+        els.wordArea.classList.remove('hidden');
+        els.wordHint.classList.add('hidden');
+        els.wordText.textContent = state.word;
+        if (state.role === 'undercover') {
+          els.wordRole.textContent = '卧底';
+          els.wordRole.classList.remove('text-emerald-100');
+          els.wordRole.classList.add('text-red-300');
+        } else if (state.role === 'civilian') {
+          els.wordRole.textContent = '平民';
+          els.wordRole.classList.remove('text-red-300');
+          els.wordRole.classList.add('text-emerald-100');
+        } else {
+          els.wordRole.textContent = '未知';
+          els.wordRole.classList.remove('text-red-300', 'text-emerald-100');
+          els.wordRole.classList.add('text-slate-100');
+        }
+      }
+
+      function renderWordPreview() {
+        const area = els.wordPreviewArea;
+        const textEl = els.wordPreviewText;
+        if (!area || !textEl) return;
+        // 词语已直接分配给所有玩家，不再需要房主预览
+        area.classList.add('hidden');
+        textEl.textContent = '';
+      }
+
+      function renderPlayers() {
+        const container = els.playersList;
+        container.innerHTML = '';
+        const players = state.players || [];
+        if (!players.length) {
+          container.innerHTML =
+            '<div class="text-xs text-slate-500">当前房间还没有玩家。</div>';
+          els.startGameBtn.disabled = true;
+          return;
+        }
+        const isHost = state.hostId && state.playerId === state.hostId;
+        const canStartOrRestart =
+          players.length >= 3 &&
+          isHost &&
+          (state.gameStatus === 'waiting' || state.gameStatus === 'ended');
+        els.startGameBtn.disabled = !canStartOrRestart;
+        // 根据状态切换按钮文案
+        els.startGameBtn.textContent =
+          state.gameStatus === 'ended' ? '重新开始' : '开始游戏';
+        // 更换词语按钮：房主且游戏未开始或已结束时可用
+        if (els.rerollWordsBtn) {
+          els.rerollWordsBtn.disabled =
+            !isHost || (state.gameStatus !== 'waiting' && state.gameStatus !== 'ended');
+        }
+        players.forEach((p, idx) => {
+          const isSelf = p.id === state.playerId;
+          const isHost = p.id === state.hostId;
+          const isCurrentSpeaker = state.currentSpeakerId === p.id;
+          const isMyVoteTarget =
+            state.myVoteTargetId && state.myVoteTargetId === p.id;
+          const item = document.createElement('div');
+          item.className =
+            'flex items-center justify-between rounded-lg border px-2.5 py-1.5 text-sm ' +
+            (p.alive
+              ? isCurrentSpeaker
+                ? 'border-brand-500/80 bg-emerald-500/10'
+                : isMyVoteTarget && state.phase === 'voting'
+                ? 'border-amber-400/80 bg-amber-500/10'
+                : 'border-slate-700/80 bg-slate-900/80'
+              : 'border-slate-800/80 bg-slate-900/40 opacity-60');
+
+          const name = document.createElement('div');
+          name.className = 'flex items-center gap-2';
+          const dot = document.createElement('span');
+          dot.className =
+            'h-2 w-2 rounded-full ' +
+            (p.alive
+              ? 'bg-brand-500 shadow-[0_0_0_4px_rgba(34,197,94,0.2)]'
+              : 'bg-slate-500');
+          const label = document.createElement('span');
+          label.textContent = `${idx + 1}. ${p.name}${
+            isSelf ? ' (你)' : ''
+          }`;
+          name.appendChild(dot);
+          name.appendChild(label);
+
+          if (isHost) {
+            const hostTag = document.createElement('span');
+            hostTag.className =
+              'ml-1 rounded-full bg-indigo-500/15 border border-indigo-400/70 px-2 py-0.5 text-[10px] text-indigo-200';
+            hostTag.textContent = '房主';
+            name.appendChild(hostTag);
+          }
+
+          if (isCurrentSpeaker) {
+            const tag = document.createElement('span');
+            tag.className =
+              'ml-1 rounded-full bg-emerald-500/15 border border-emerald-400/70 px-2 py-0.5 text-[10px] text-emerald-200';
+            tag.textContent = '当前发言';
+            name.appendChild(tag);
+          }
+
+          const actions = document.createElement('div');
+          actions.className = 'flex items-center gap-1.5';
+
+          const voteBtn = document.createElement('button');
+          voteBtn.className =
+            'px-2.5 py-1 text-[11px] rounded-full border border-slate-600/80 bg-slate-900/80 text-slate-200 hover:bg-slate-800/80 disabled:opacity-40 disabled:cursor-default';
+          voteBtn.textContent = isMyVoteTarget ? '已投' : '投票';
+          voteBtn.disabled =
+            !p.alive ||
+            !state.playerId ||
+            p.id === state.playerId ||
+            state.gameStatus !== 'playing' ||
+            state.phase !== 'voting' ||
+            !!state.myVoteTargetId;
+          voteBtn.addEventListener('click', () => {
+            if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+              state.ws.send(
+                JSON.stringify({ type: 'vote', targetId: p.id })
+              );
+              state.myVoteTargetId = p.id;
+              renderPlayers();
+            }
+          });
+          actions.appendChild(voteBtn);
+
+          item.appendChild(name);
+          item.appendChild(actions);
+          container.appendChild(item);
+        });
+      }
+
+      function renderChat(scrollToBottom) {
+        const list = els.chatList;
+        const prevAtBottom =
+          list.scrollHeight - list.scrollTop - list.clientHeight < 40;
+        list.innerHTML = '';
+        const messages = state.chat || [];
+        messages
+          .slice()
+          .sort((a, b) => a.ts - b.ts)
+          .forEach((m) => {
+            const item = document.createElement('div');
+            item.className = 'mb-1.5 text-sm';
+            const meta = document.createElement('div');
+            meta.className = 'flex items-center gap-1.5 mb-0.5';
+            const name = document.createElement('div');
+            name.className =
+              'text-xs font-medium ' +
+              (m.playerId === 'system'
+                ? 'text-amber-300'
+                : 'text-slate-200');
+            name.textContent = m.name || '玩家';
+            const time = document.createElement('div');
+            time.className = 'text-[10px] text-slate-500';
+            const d = new Date(m.ts || Date.now());
+            time.textContent = `${String(d.getHours()).padStart(
+              2,
+              '0'
+            )}:${String(d.getMinutes()).padStart(2, '0')}`;
+            meta.appendChild(name);
+            meta.appendChild(time);
+            const text = document.createElement('div');
+            text.className =
+              'inline-block rounded-lg border border-slate-700/80 bg-slate-900/90 px-2 py-1 text-xs text-slate-100';
+            text.textContent = m.text || '';
+            item.appendChild(meta);
+            item.appendChild(text);
+            list.appendChild(item);
+          });
+        if (scrollToBottom || prevAtBottom) {
+          list.scrollTop = list.scrollHeight;
+        }
+      }
+
+      function sendChat() {
+        const text = els.chatInput.value.trim();
+        if (!text || !state.ws || state.ws.readyState !== WebSocket.OPEN) {
+          return;
+        }
+        // 前端再做一次简单限制：发言阶段只能轮到的玩家发
+        if (
+          state.gameStatus === 'playing' &&
+          state.phase === 'speaking' &&
+          state.currentSpeakerId &&
+          state.currentSpeakerId !== state.playerId
+        ) {
+          return;
+        }
+        state.ws.send(JSON.stringify({ type: 'chat', text }));
+        els.chatInput.value = '';
+      }
+
+      els.createGameBtn.addEventListener('click', apiCreateGame);
+      els.joinGameBtn.addEventListener('click', apiJoinGame);
+      els.startGameBtn.addEventListener('click', apiStartGame);
+      els.chatSendBtn.addEventListener('click', sendChat);
+      els.chatInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          sendChat();
+        }
+      });
+
+      if (els.leaveGameBtn) {
+        els.leaveGameBtn.addEventListener('click', apiLeaveGame);
+      }
+
+      if (els.rerollWordsBtn) {
+        els.rerollWordsBtn.addEventListener('click', apiRerollWords);
+      }
+
+      if (
+        location.hostname === 'localhost' ||
+        location.hostname === '127.0.0.1'
+      ) {
+        els.nicknameInput.value =
+          '玩家-' + Math.random().toString(36).slice(2, 6);
+      }
+    </script>
+  </body>
+</html>
+

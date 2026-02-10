@@ -1,0 +1,16 @@
+{
+  "name": "whois-undercover-game",
+  "version": "1.0.0",
+  "description": "一个使用 Node.js 实现的在线谁是卧底小游戏，支持在线聊天和投票，使用文件存储数据。",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "NODE_ENV=development node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "ws": "^8.18.0",
+    "uuid": "^11.0.3"
+  },
+  "license": "MIT"
+}
