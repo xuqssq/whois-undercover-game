@@ -1,0 +1,393 @@
+{
+  "73f2b3": {
+    "id": "73f2b3",
+    "wordCommon": "张韶涵",
+    "wordUndercover": "王心凌",
+    "status": "ended",
+    "phase": "ended",
+    "hostId": "0ddca981-ba50-4a0c-bb66-4f86a27df2e6",
+    "players": {
+      "0ddca981-ba50-4a0c-bb66-4f86a27df2e6": {
+        "id": "0ddca981-ba50-4a0c-bb66-4f86a27df2e6",
+        "name": "if",
+        "role": "undercover",
+        "alive": false
+      },
+      "35c71f78-3d1d-43e0-afed-b84f9c70201b": {
+        "id": "35c71f78-3d1d-43e0-afed-b84f9c70201b",
+        "name": "宫商角徵羽",
+        "role": "civilian",
+        "alive": true
+      },
+      "2070eeb9-e0ff-4c3d-9828-28404c7acbad": {
+        "id": "2070eeb9-e0ff-4c3d-9828-28404c7acbad",
+        "name": "咩啊",
+        "role": "civilian",
+        "alive": true
+      },
+      "00d8c3bd-cf44-43ac-9333-28a5b7ae51aa": {
+        "id": "00d8c3bd-cf44-43ac-9333-28a5b7ae51aa",
+        "name": "沭叶",
+        "role": "civilian",
+        "alive": false
+      }
+    },
+    "chat": [
+      {
+        "id": "d21d4fa6-816d-47d9-a8d0-a1ff259d8cc2",
+        "playerId": "system",
+        "name": "系统",
+        "text": "玩家【if】创建了房间，并成为房主。",
+        "ts": 1770718469904
+      },
+      {
+        "id": "9fa85385-4068-462e-97af-ac203ce1932c",
+        "playerId": "system",
+        "name": "系统",
+        "text": "玩家【宫商角徵羽】加入了房间。",
+        "ts": 1770718483209
+      },
+      {
+        "id": "def6009b-247e-4aea-8979-38ef1ef2797f",
+        "playerId": "system",
+        "name": "系统",
+        "text": "玩家【咩啊】加入了房间。",
+        "ts": 1770718516833
+      },
+      {
+        "id": "1bf88c1a-1b7f-42c3-a360-4b65b4dd6b51",
+        "playerId": "system",
+        "name": "系统",
+        "text": "玩家【沭叶】加入了房间。",
+        "ts": 1770718518255
+      },
+      {
+        "id": "3045b5cf-f38f-4e94-b0b5-61d255487f44",
+        "playerId": "system",
+        "name": "系统",
+        "text": "房主更换了词语，已分配给所有玩家，请查看自己的词语。",
+        "ts": 1770718521559
+      },
+      {
+        "id": "01e1245f-b398-415b-bc45-d628c9c9384b",
+        "playerId": "system",
+        "name": "系统",
+        "text": "第 1 轮发言顺序：if → 宫商角徵羽 → 咩啊 → 沭叶",
+        "ts": 1770718523120
+      },
+      {
+        "id": "e542e98a-86da-4dc2-9001-93a7994834f1",
+        "playerId": "system",
+        "name": "系统",
+        "text": "首先由【if】开始发言。",
+        "ts": 1770718523120
+      },
+      {
+        "id": "c8748bc8-4ea4-4091-9fe6-6aff514f66e6",
+        "playerId": "0ddca981-ba50-4a0c-bb66-4f86a27df2e6",
+        "name": "if",
+        "text": "她是一个歌手",
+        "ts": 1770718537979
+      },
+      {
+        "id": "39a957c0-0268-46ea-9e38-54acb9abaccc",
+        "playerId": "system",
+        "name": "系统",
+        "text": "轮到【宫商角徵羽】发言。",
+        "ts": 1770718537981
+      },
+      {
+        "id": "f9d93256-183a-4d25-aca3-159c2ca2fbc3",
+        "playerId": "35c71f78-3d1d-43e0-afed-b84f9c70201b",
+        "name": "宫商角徵羽",
+        "text": "很红的台湾歌手",
+        "ts": 1770718578428
+      },
+      {
+        "id": "6583a71c-faf5-4249-b886-8763793616de",
+        "playerId": "system",
+        "name": "系统",
+        "text": "轮到【咩啊】发言。",
+        "ts": 1770718578430
+      },
+      {
+        "id": "e5880b30-168d-4141-bf36-45619c2fe628",
+        "playerId": "2070eeb9-e0ff-4c3d-9828-28404c7acbad",
+        "name": "咩啊",
+        "text": "她的翅膀很出名",
+        "ts": 1770718608969
+      },
+      {
+        "id": "42d262f9-c6f5-49c4-9d23-1838d7fa7e06",
+        "playerId": "system",
+        "name": "系统",
+        "text": "轮到【沭叶】发言。",
+        "ts": 1770718608970
+      },
+      {
+        "id": "5c4044e0-fcdc-41fb-a3b4-ce0a0fe8d5ba",
+        "playerId": "00d8c3bd-cf44-43ac-9333-28a5b7ae51aa",
+        "name": "沭叶",
+        "text": "做过牢",
+        "ts": 1770718641524
+      },
+      {
+        "id": "42fab0e8-27ed-490a-b02f-60eb763cd192",
+        "playerId": "system",
+        "name": "系统",
+        "text": "第 1 轮发言结束，请大家投票。",
+        "ts": 1770718641525
+      },
+      {
+        "id": "f0d76962-9cf7-4176-b6a5-6f8713cd707c",
+        "playerId": "system",
+        "name": "系统",
+        "text": "第 1 轮票数汇总：【宫商角徵羽】1票，【if】1票，【沭叶】1票，【咩啊】1票。",
+        "ts": 1770718671431
+      },
+      {
+        "id": "af7edb84-9538-4816-94ac-efc007d7fab8",
+        "playerId": "system",
+        "name": "系统",
+        "text": "第 1 轮出现平票，本轮无人出局，进入下一轮发言。",
+        "ts": 1770718671431
+      },
+      {
+        "id": "404aec3e-42d7-4ee8-9d61-ab0d7ed0eb58",
+        "playerId": "system",
+        "name": "系统",
+        "text": "第 2 轮发言顺序：沭叶 → 咩啊 → if → 宫商角徵羽",
+        "ts": 1770718671431
+      },
+      {
+        "id": "38cc5320-fe93-4ba2-bc22-b988b5c01e0c",
+        "playerId": "system",
+        "name": "系统",
+        "text": "首先由【沭叶】开始发言。",
+        "ts": 1770718671431
+      },
+      {
+        "id": "49134320-3a39-4f7f-a689-c821e97be8d8",
+        "playerId": "00d8c3bd-cf44-43ac-9333-28a5b7ae51aa",
+        "name": "沭叶",
+        "text": "女的，有一首歌非常火",
+        "ts": 1770718714180
+      },
+      {
+        "id": "96936a1b-e2b3-46d9-b359-fa6870b89281",
+        "playerId": "system",
+        "name": "系统",
+        "text": "轮到【咩啊】发言。",
+        "ts": 1770718714183
+      },
+      {
+        "id": "b6540414-14bb-449a-aed3-89102d96eee5",
+        "playerId": "2070eeb9-e0ff-4c3d-9828-28404c7acbad",
+        "name": "咩啊",
+        "text": "之前几年比较出名",
+        "ts": 1770718745478
+      },
+      {
+        "id": "e58a3248-72d7-4cd9-8e72-1f755d4e4e29",
+        "playerId": "system",
+        "name": "系统",
+        "text": "轮到【if】发言。",
+        "ts": 1770718745480
+      },
+      {
+        "id": "de526760-6a5d-4e85-b609-018b3e59c9d1",
+        "playerId": "0ddca981-ba50-4a0c-bb66-4f86a27df2e6",
+        "name": "if",
+        "text": "前段时间参加了浪姐，又火了一遍",
+        "ts": 1770718778173
+      },
+      {
+        "id": "0fd3244a-6c64-44a6-b5c6-64454bedf296",
+        "playerId": "system",
+        "name": "系统",
+        "text": "轮到【宫商角徵羽】发言。",
+        "ts": 1770718778174
+      },
+      {
+        "id": "0a5839ba-00bb-4389-8152-9080f26bc31b",
+        "playerId": "35c71f78-3d1d-43e0-afed-b84f9c70201b",
+        "name": "宫商角徵羽",
+        "text": "她有很多漂亮的造型",
+        "ts": 1770718796853
+      },
+      {
+        "id": "329fe27d-5abc-4056-8c60-e2a5a88702af",
+        "playerId": "system",
+        "name": "系统",
+        "text": "第 2 轮发言结束，请大家投票。",
+        "ts": 1770718796854
+      },
+      {
+        "id": "5e77d31e-3723-48ac-9057-07000a07dec4",
+        "playerId": "system",
+        "name": "系统",
+        "text": "第 2 轮票数汇总：【if】1票，【沭叶】2票，【宫商角徵羽】1票。",
+        "ts": 1770718811045
+      },
+      {
+        "id": "0c4091ce-6cf9-4501-96c0-0ab4cfd90a89",
+        "playerId": "system",
+        "name": "系统",
+        "text": "第 2 轮投票结束，玩家【沭叶】出局",
+        "ts": 1770718811045
+      },
+      {
+        "id": "37d44da9-c972-4fe8-b819-51ae9f455349",
+        "playerId": "system",
+        "name": "系统",
+        "text": "第 3 轮发言顺序：咩啊 → 宫商角徵羽 → if",
+        "ts": 1770718811045
+      },
+      {
+        "id": "3ead6787-306f-4c30-ae7c-d79b1969f692",
+        "playerId": "system",
+        "name": "系统",
+        "text": "首先由【咩啊】开始发言。",
+        "ts": 1770718811045
+      },
+      {
+        "id": "1bd03fe6-1dac-4c66-81f8-b19df67dad1c",
+        "playerId": "2070eeb9-e0ff-4c3d-9828-28404c7acbad",
+        "name": "咩啊",
+        "text": "是歌手也是演员",
+        "ts": 1770718893303
+      },
+      {
+        "id": "df49ace9-2bc4-4a24-afcd-82c456b35658",
+        "playerId": "system",
+        "name": "系统",
+        "text": "轮到【宫商角徵羽】发言。",
+        "ts": 1770718893306
+      },
+      {
+        "id": "0eabfbef-5005-490d-9c30-fa064078e379",
+        "playerId": "35c71f78-3d1d-43e0-afed-b84f9c70201b",
+        "name": "宫商角徵羽",
+        "text": "演过很火的偶像剧在我们小时候",
+        "ts": 1770718918077
+      },
+      {
+        "id": "553c338d-fa55-4f67-976a-75f50d0b315b",
+        "playerId": "system",
+        "name": "系统",
+        "text": "轮到【if】发言。",
+        "ts": 1770718918078
+      },
+      {
+        "id": "76e281e8-0086-4fe4-a5d2-1224818797a8",
+        "playerId": "0ddca981-ba50-4a0c-bb66-4f86a27df2e6",
+        "name": "if",
+        "text": "唱的歌很甜",
+        "ts": 1770718941951
+      },
+      {
+        "id": "bc0164c5-cb5f-46a1-9bb0-dac62887f5e4",
+        "playerId": "system",
+        "name": "系统",
+        "text": "第 3 轮发言结束，请大家投票。",
+        "ts": 1770718941953
+      },
+      {
+        "id": "59ff146d-17da-491a-aa8d-627a6b9f8657",
+        "playerId": "system",
+        "name": "系统",
+        "text": "第 3 轮票数汇总：【咩啊】1票，【if】2票。",
+        "ts": 1770718946469
+      },
+      {
+        "id": "a32538d7-d46c-4f60-b2a0-1bbbc3867032",
+        "playerId": "system",
+        "name": "系统",
+        "text": "第 3 轮投票结束，玩家【if】出局",
+        "ts": 1770718946469
+      },
+      {
+        "id": "feeae8ce-b9ab-4cee-aad4-86423855a9f1",
+        "playerId": "system",
+        "name": "系统",
+        "text": "所有卧底已被淘汰，平民获胜！",
+        "ts": 1770718946469
+      },
+      {
+        "id": "2d592758-1890-4999-b07a-fcc0df805837",
+        "playerId": "system",
+        "name": "系统",
+        "text": "本局词语揭晓 — 平民词：张韶涵，卧底词：王心凌",
+        "ts": 1770718946469
+      }
+    ],
+    "votes": {
+      "round": 3,
+      "records": [
+        {
+          "round": 1,
+          "from": "2070eeb9-e0ff-4c3d-9828-28404c7acbad",
+          "to": "35c71f78-3d1d-43e0-afed-b84f9c70201b"
+        },
+        {
+          "round": 1,
+          "from": "00d8c3bd-cf44-43ac-9333-28a5b7ae51aa",
+          "to": "0ddca981-ba50-4a0c-bb66-4f86a27df2e6"
+        },
+        {
+          "round": 1,
+          "from": "35c71f78-3d1d-43e0-afed-b84f9c70201b",
+          "to": "00d8c3bd-cf44-43ac-9333-28a5b7ae51aa"
+        },
+        {
+          "round": 1,
+          "from": "0ddca981-ba50-4a0c-bb66-4f86a27df2e6",
+          "to": "2070eeb9-e0ff-4c3d-9828-28404c7acbad"
+        },
+        {
+          "round": 2,
+          "from": "35c71f78-3d1d-43e0-afed-b84f9c70201b",
+          "to": "0ddca981-ba50-4a0c-bb66-4f86a27df2e6"
+        },
+        {
+          "round": 2,
+          "from": "2070eeb9-e0ff-4c3d-9828-28404c7acbad",
+          "to": "00d8c3bd-cf44-43ac-9333-28a5b7ae51aa"
+        },
+        {
+          "round": 2,
+          "from": "00d8c3bd-cf44-43ac-9333-28a5b7ae51aa",
+          "to": "35c71f78-3d1d-43e0-afed-b84f9c70201b"
+        },
+        {
+          "round": 2,
+          "from": "0ddca981-ba50-4a0c-bb66-4f86a27df2e6",
+          "to": "00d8c3bd-cf44-43ac-9333-28a5b7ae51aa"
+        },
+        {
+          "round": 3,
+          "from": "0ddca981-ba50-4a0c-bb66-4f86a27df2e6",
+          "to": "2070eeb9-e0ff-4c3d-9828-28404c7acbad"
+        },
+        {
+          "round": 3,
+          "from": "35c71f78-3d1d-43e0-afed-b84f9c70201b",
+          "to": "0ddca981-ba50-4a0c-bb66-4f86a27df2e6"
+        },
+        {
+          "round": 3,
+          "from": "2070eeb9-e0ff-4c3d-9828-28404c7acbad",
+          "to": "0ddca981-ba50-4a0c-bb66-4f86a27df2e6"
+        }
+      ]
+    },
+    "round": 3,
+    "turnOrder": [
+      "2070eeb9-e0ff-4c3d-9828-28404c7acbad",
+      "35c71f78-3d1d-43e0-afed-b84f9c70201b",
+      "0ddca981-ba50-4a0c-bb66-4f86a27df2e6"
+    ],
+    "turnIndex": 3,
+    "currentSpeakerId": null
+  }
+}
