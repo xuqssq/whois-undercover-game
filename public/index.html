@@ -249,6 +249,21 @@
           ></div>
         </div>
 
+        <!-- 系统消息 -->
+        <div
+          class="rounded-xl border border-amber-500/30 bg-gradient-to-br from-amber-950/30 to-slate-950/90 p-3"
+        >
+          <div
+            class="text-[11px] uppercase tracking-[0.2em] text-amber-400/80 mb-2"
+          >
+            系统消息
+          </div>
+          <div
+            id="systemList"
+            class="scroll-thin max-h-[120px] min-h-[40px] overflow-y-auto rounded-lg border border-amber-500/20 bg-slate-950/80 px-2.5 py-2 text-xs text-amber-200/90 space-y-1"
+          ></div>
+        </div>
+
         <!-- 玩家 & 聊天 两列布局 -->
         <div class="grid gap-3 md:grid-cols-[minmax(0,1.1fr)_minmax(0,1.2fr)]">
           <!-- 玩家 / 投票 / 发言顺序 -->
@@ -353,6 +368,7 @@
         wordPreviewText: document.getElementById('wordPreviewText'),
         playersList: document.getElementById('playersList'),
         chatList: document.getElementById('chatList'),
+        systemList: document.getElementById('systemList'),
         chatInput: document.getElementById('chatInput'),
         chatSendBtn: document.getElementById('chatSendBtn'),
         chatHint: document.getElementById('chatHint'),
@@ -845,32 +861,36 @@
 
       function renderChat(scrollToBottom) {
         const list = els.chatList;
+        const sysList = els.systemList;
         const prevAtBottom =
           list.scrollHeight - list.scrollTop - list.clientHeight < 40;
+        const sysPrevAtBottom =
+          sysList.scrollHeight - sysList.scrollTop - sysList.clientHeight < 40;
         list.innerHTML = '';
-        const messages = state.chat || [];
-        messages
-          .slice()
-          .sort((a, b) => a.ts - b.ts)
-          .forEach((m) => {
+        sysList.innerHTML = '';
+        const messages = (state.chat || []).slice().sort((a, b) => a.ts - b.ts);
+        messages.forEach((m) => {
+          if (m.playerId === 'system') {
+            const item = document.createElement('div');
+            const d = new Date(m.ts || Date.now());
+            const ts = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+            item.className = 'flex items-start gap-1.5';
+            item.innerHTML =
+              `<span class="text-[10px] text-amber-400/50 shrink-0">${ts}</span>` +
+              `<span>${m.text || ''}</span>`;
+            sysList.appendChild(item);
+          } else {
             const item = document.createElement('div');
             item.className = 'mb-1.5 text-sm';
             const meta = document.createElement('div');
             meta.className = 'flex items-center gap-1.5 mb-0.5';
             const name = document.createElement('div');
-            name.className =
-              'text-xs font-medium ' +
-              (m.playerId === 'system'
-                ? 'text-amber-300'
-                : 'text-slate-200');
+            name.className = 'text-xs font-medium text-slate-200';
             name.textContent = m.name || '玩家';
             const time = document.createElement('div');
             time.className = 'text-[10px] text-slate-500';
             const d = new Date(m.ts || Date.now());
-            time.textContent = `${String(d.getHours()).padStart(
-              2,
-              '0'
-            )}:${String(d.getMinutes()).padStart(2, '0')}`;
+            time.textContent = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
             meta.appendChild(name);
             meta.appendChild(time);
             const text = document.createElement('div');
@@ -880,9 +900,13 @@
             item.appendChild(meta);
             item.appendChild(text);
             list.appendChild(item);
-          });
+          }
+        });
         if (scrollToBottom || prevAtBottom) {
           list.scrollTop = list.scrollHeight;
+        }
+        if (scrollToBottom || sysPrevAtBottom) {
+          sysList.scrollTop = sysList.scrollHeight;
         }
       }
 
