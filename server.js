@@ -95,9 +95,9 @@ function joinGame(gameId, name) {
 
   const isFirstPlayer = Object.keys(game.players).length === 0;
 
-  // 如果同名且仍在局内（alive）的玩家已经存在，则认为是同一个玩家（例如刷新页面重连）
+  // 如果同名玩家已经存在（无论存活与否），则认为是同一个玩家（例如刷新页面重连）
   const existing = Object.values(game.players).find(
-    (p) => p.name === name && p.alive
+    (p) => p.name === name
   );
   if (existing) {
     return { game, player: existing };
@@ -632,6 +632,11 @@ wss.on('connection', (ws, req) => {
         return;
       }
       if (msg.type === 'chat') {
+        // 已出局的玩家不能发消息
+        const player = game.players[playerId];
+        if (player && !player.alive && game.status === 'playing') {
+          return;
+        }
         // 发言阶段只允许当前发言玩家发消息
         const isSpeakingTurn =
           game.status === 'playing' &&

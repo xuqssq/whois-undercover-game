@@ -434,14 +434,20 @@
       }
 
       function updateChatControls() {
+        const me = state.players.find(p => p.id === state.playerId);
+        const amDead = me && !me.alive && state.gameStatus === 'playing';
         const disableSpeaking =
-          state.gameStatus === 'playing' &&
+          amDead ||
+          (state.gameStatus === 'playing' &&
           state.phase === 'speaking' &&
           state.currentSpeakerId &&
-          state.currentSpeakerId !== state.playerId;
+          state.currentSpeakerId !== state.playerId);
         els.chatInput.disabled = disableSpeaking;
         els.chatSendBtn.disabled = disableSpeaking;
-        if (disableSpeaking) {
+        if (amDead) {
+          els.chatInput.classList.add('opacity-60', 'cursor-not-allowed');
+          els.chatHint.textContent = '你已出局，可以继续观看但无法发言。';
+        } else if (disableSpeaking) {
           els.chatInput.classList.add('opacity-60', 'cursor-not-allowed');
           els.chatHint.textContent = '当前为轮流发言阶段，只能由轮到的玩家发言。';
         } else {
@@ -647,7 +653,13 @@
         };
 
         ws.onclose = () => {
-          setConnectionStatus('已断开', false);
+          setConnectionStatus('已断开，正在重连...', false);
+          // 自动重连（2秒后）
+          setTimeout(() => {
+            if (state.gameId && state.playerId) {
+              connectWs();
+            }
+          }, 2000);
         };
 
         ws.onerror = () => {
@@ -704,19 +716,19 @@
         els.wordArea.classList.remove('hidden');
         els.wordHint.classList.add('hidden');
         els.wordText.textContent = state.word;
-        if (state.role === 'undercover') {
-          // els.wordRole.textContent = '卧底';
-          // els.wordRole.classList.remove('text-emerald-100');
-          // els.wordRole.classList.add('text-red-300');
-        } else if (state.role === 'civilian') {
-          // els.wordRole.textContent = '平民';
-          // els.wordRole.classList.remove('text-red-300');
-          // els.wordRole.classList.add('text-emerald-100');
-        } else {
-          els.wordRole.textContent = '未知';
-          els.wordRole.classList.remove('text-red-300', 'text-emerald-100');
-          els.wordRole.classList.add('text-slate-100');
-        }
+        // if (state.role === 'undercover') {
+        //   els.wordRole.textContent = '卧底';
+        //   els.wordRole.classList.remove('text-emerald-100');
+        //   els.wordRole.classList.add('text-red-300');
+        // } else if (state.role === 'civilian') {
+        //   els.wordRole.textContent = '平民';
+        //   els.wordRole.classList.remove('text-red-300');
+        //   els.wordRole.classList.add('text-emerald-100');
+        // } else {
+        //   els.wordRole.textContent = '未知';
+        //   els.wordRole.classList.remove('text-red-300', 'text-emerald-100');
+        //   els.wordRole.classList.add('text-slate-100');
+        // }
       }
 
       function renderWordPreview() {
@@ -877,6 +889,11 @@
       function sendChat() {
         const text = els.chatInput.value.trim();
         if (!text || !state.ws || state.ws.readyState !== WebSocket.OPEN) {
+          return;
+        }
+        // 已出局的玩家不能发消息
+        const me = state.players.find(p => p.id === state.playerId);
+        if (me && !me.alive && state.gameStatus === 'playing') {
           return;
         }
         // 前端再做一次简单限制：发言阶段只能轮到的玩家发
