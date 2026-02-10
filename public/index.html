@@ -224,12 +224,12 @@
                 -
               </div>
             </div>
-            <div
+            <!-- <div
               id="wordRole"
               class="text-[11px] uppercase tracking-[0.2em] text-emerald-100"
             >
               -
-            </div>
+            </div> -->
           </div>
           <div
             id="wordHint"
@@ -716,19 +716,19 @@
         els.wordArea.classList.remove('hidden');
         els.wordHint.classList.add('hidden');
         els.wordText.textContent = state.word;
-        // if (state.role === 'undercover') {
-        //   els.wordRole.textContent = '卧底';
-        //   els.wordRole.classList.remove('text-emerald-100');
-        //   els.wordRole.classList.add('text-red-300');
-        // } else if (state.role === 'civilian') {
-        //   els.wordRole.textContent = '平民';
-        //   els.wordRole.classList.remove('text-red-300');
-        //   els.wordRole.classList.add('text-emerald-100');
-        // } else {
-        //   els.wordRole.textContent = '未知';
-        //   els.wordRole.classList.remove('text-red-300', 'text-emerald-100');
-        //   els.wordRole.classList.add('text-slate-100');
-        // }
+        if (state.role === 'undercover') {
+          els.wordRole.textContent = '卧底';
+          els.wordRole.classList.remove('text-emerald-100');
+          els.wordRole.classList.add('text-red-300');
+        } else if (state.role === 'civilian') {
+          els.wordRole.textContent = '平民';
+          els.wordRole.classList.remove('text-red-300');
+          els.wordRole.classList.add('text-emerald-100');
+        } else {
+          els.wordRole.textContent = '未知';
+          els.wordRole.classList.remove('text-red-300', 'text-emerald-100');
+          els.wordRole.classList.add('text-slate-100');
+        }
       }
 
       function renderWordPreview() {
