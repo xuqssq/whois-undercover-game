@@ -678,7 +678,7 @@
               state.phase = g.phase || 'waiting';
               state.hostId = g.hostId || null;
               state.currentSpeakerId = g.currentSpeakerId || null;
-              if (g.round !== prevRound) {
+              if (g.round !== prevRound || g.status !== 'playing') {
                 state.myVoteTargetId = null;
               }
               updateStatusPill(g.status);
