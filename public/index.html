@@ -339,7 +339,9 @@
     // ============================================================
     function LobbyView() {
       const { state, dispatch, api } = useContext(GameContext);
-      const [nickname, setNickname] = useState(state.nickname || ('玩家-' + Math.random().toString(36).slice(2, 6)));
+      const [nickname, setNickname] = useState(() => {
+        return localStorage.getItem('wis_nickname') || state.nickname || ('玩家-' + Math.random().toString(36).slice(2, 6));
+      });
       const [joinId, setJoinId] = useState('');
       const [loading, setLoading] = useState(false);
       const [error, setError] = useState('');
@@ -351,6 +353,7 @@
           const data = await api.createGame();
           const joinData = await api.joinGame(data.gameId, nickname.trim());
           dispatch({ type: 'SET_NICKNAME', payload: nickname.trim() });
+          localStorage.setItem('wis_nickname', nickname.trim());
           dispatch({ type: 'JOIN_SUCCESS', payload: joinData });
         } catch(e) { setError(e.message); }
         setLoading(false);
@@ -363,6 +366,7 @@
         try {
           const data = await api.joinGame(joinId.trim(), nickname.trim());
           dispatch({ type: 'SET_NICKNAME', payload: nickname.trim() });
+          localStorage.setItem('wis_nickname', nickname.trim());
           dispatch({ type: 'JOIN_SUCCESS', payload: data });
         } catch(e) { setError(e.message); }
         setLoading(false);
