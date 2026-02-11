@@ -80,7 +80,8 @@ function createGame() {
     round: 1,
     turnOrder: [],
     turnIndex: 0,
-    currentSpeakerId: null
+    currentSpeakerId: null,
+    undercoverCount: 1
   };
   games[id] = game;
   saveGames(games);
@@ -174,6 +175,7 @@ function leaveGame(gameId, playerId) {
 function startGame(gameId, undercoverCount = 1) {
   const game = games[gameId];
   if (!game) return null;
+  game.undercoverCount = undercoverCount;
   const playerIds = Object.keys(game.players);
   if (playerIds.length < undercoverCount + 2) {
     throw new Error('玩家过少，无法开始游戏');
@@ -376,8 +378,7 @@ function restartGame(gameId) {
   game.wordCommon = pair.common;
   game.wordUndercover = pair.undercover;
 
-  // 清理聊天，仅保留系统提示
-  game.chat = [];
+  // 保留聊天记录，追加系统提示
   addSystemChat(game, '房主重新开始了一局新游戏，请房主点击"更换词语"分配词语后再开始。');
 
   saveGames(games);
@@ -414,15 +415,16 @@ function rerollWords(gameId) {
 
   // 直接分配角色给所有玩家
   const playerIds = Object.keys(game.players);
-  if (playerIds.length >= 3) {
+  const ucCount = game.undercoverCount || 1;
+  if (playerIds.length >= ucCount + 2) {
     const shuffled = [...playerIds].sort(() => Math.random() - 0.5);
-    const undercoverIds = new Set(shuffled.slice(0, 1));
+    const undercoverIds = new Set(shuffled.slice(0, ucCount));
     for (const id of playerIds) {
       game.players[id].role = undercoverIds.has(id) ? 'undercover' : 'civilian';
     }
     addSystemChat(game, '房主更换了词语，已分配给所有玩家，请查看自己的词语。');
   } else {
-    addSystemChat(game, '房主更换了词语（玩家不足3人，暂未分配）。');
+    addSystemChat(game, `房主更换了词语（玩家不足${ucCount + 2}人，暂未分配）。`);
   }
 
   saveGames(games);
@@ -503,6 +505,23 @@ app.post('/api/games/:id/leave', (req, res) => {
   }
   const game = leaveGame(req.params.id, String(playerId));
   if (!game) return res.status(404).json({ error: '游戏或玩家不存在' });
+  res.json({ ok: true });
+});
+
+// 修改游戏设置（卧底人数等）
+app.post('/api/games/:id/settings', (req, res) => {
+  const { playerId, undercoverCount } = req.body || {};
+  if (!playerId) return res.status(400).json({ error: 'playerId 必填' });
+  const game = games[req.params.id];
+  if (!game) return res.status(404).json({ error: '游戏不存在' });
+  if (game.hostId && game.hostId !== playerId) return res.status(403).json({ error: '只有房主可以修改设置' });
+  if (game.status !== 'waiting') return res.status(400).json({ error: '只能在等待阶段修改设置' });
+  if (undercoverCount !== undefined) {
+    const uc = Math.max(1, Math.min(3, Number(undercoverCount) || 1));
+    game.undercoverCount = uc;
+  }
+  saveGames(games);
+  broadcastGameState(req.params.id);
   res.json({ ok: true });
 });
 
@@ -762,6 +781,7 @@ function publicGameState(game) {
       // 不暴露 role
     })),
     chat: game.chat,
+    undercoverCount: game.undercoverCount || 1,
     // 提示词语信息只在本地显示：前端根据当前玩家 id 再查询
     hasStarted: game.status !== 'waiting'
   };
