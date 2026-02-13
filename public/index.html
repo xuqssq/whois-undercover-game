@@ -1,858 +1,1558 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>谁是卧底 - 在线版</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react@18/umd/react.production.min.js"
+    ></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"
+    ></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/@babel/standalone/babel.min.js"
+    ></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
     <script>
       tailwind.config = {
         theme: {
           extend: {
             colors: {
-              cream: { DEFAULT: '#FFF8F0', 50: '#FFFDFB', 100: '#FFF8F0', 200: '#FEF3E2', 300: '#F5EDE3' },
-              primary: { 50: '#FEF0EB', 100: '#FDEEE8', 200: '#FBCFC2', 500: '#E07A5F', 600: '#C96A52', 700: '#B25A45' },
-              sage: { 50: '#F0F7F3', 100: '#E8F4ED', 500: '#81B29A', 600: '#6A9B83' },
-              amber: { 50: '#FDF9EE', 100: '#FDF6E3', 500: '#F2CC8F', 600: '#E0B870' },
-              rose: { 50: '#FDF0EF', 100: '#FDE8E6', 500: '#D4726A' },
-              warm: { 900: '#3D3229', 700: '#5C4F43', 500: '#8B7E74', 300: '#B8ADA3', 100: '#E8DDD1' }
+              cream: {
+                DEFAULT: "#FFF8F0",
+                50: "#FFFDFB",
+                100: "#FFF8F0",
+                200: "#FEF3E2",
+                300: "#F5EDE3",
+              },
+              primary: {
+                50: "#FEF0EB",
+                100: "#FDEEE8",
+                200: "#FBCFC2",
+                500: "#E07A5F",
+                600: "#C96A52",
+                700: "#B25A45",
+              },
+              sage: {
+                50: "#F0F7F3",
+                100: "#E8F4ED",
+                500: "#81B29A",
+                600: "#6A9B83",
+              },
+              amber: {
+                50: "#FDF9EE",
+                100: "#FDF6E3",
+                500: "#F2CC8F",
+                600: "#E0B870",
+              },
+              rose: { 50: "#FDF0EF", 100: "#FDE8E6", 500: "#D4726A" },
+              warm: {
+                900: "#3D3229",
+                700: "#5C4F43",
+                500: "#8B7E74",
+                300: "#B8ADA3",
+                100: "#E8DDD1",
+              },
             },
             fontFamily: {
-              serif: ['"Noto Serif SC"', 'serif'],
-              sans: ['"Noto Sans SC"', 'sans-serif'],
-              mono: ['"JetBrains Mono"', 'monospace']
-            }
-          }
-        }
+              serif: ['"Noto Serif SC"', "serif"],
+              sans: ['"Noto Sans SC"', "sans-serif"],
+              mono: ['"JetBrains Mono"', "monospace"],
+            },
+          },
+        },
       };
     </script>
     <style>
-      * { box-sizing: border-box; }
-      body { font-family: 'Noto Sans SC', sans-serif; background: #FFF8F0; color: #3D3229; overflow: hidden; }
-      .scroll-thin::-webkit-scrollbar { width: 5px; }
-      .scroll-thin::-webkit-scrollbar-track { background: transparent; }
-      .scroll-thin::-webkit-scrollbar-thumb { background: rgba(139,126,116,0.3); border-radius: 999px; }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Noto Sans SC", sans-serif;
+        background: #fff8f0;
+        color: #3d3229;
+        overflow: hidden;
+      }
+      .scroll-thin::-webkit-scrollbar {
+        width: 5px;
+      }
+      .scroll-thin::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .scroll-thin::-webkit-scrollbar-thumb {
+        background: rgba(139, 126, 116, 0.3);
+        border-radius: 999px;
+      }
       .bg-dots {
-        background-image: radial-gradient(circle, #E8DDD1 1px, transparent 1px);
+        background-image: radial-gradient(circle, #e8ddd1 1px, transparent 1px);
         background-size: 24px 24px;
       }
       /* Flip card */
-      .flip-container { perspective: 800px; }
-      .flip-card { transition: transform 0.6s cubic-bezier(0.4,0,0.2,1); transform-style: preserve-3d; }
-      .flip-card.flipped { transform: rotateY(180deg); }
-      .flip-face { backface-visibility: hidden; position: absolute; inset: 0; }
-      .flip-back { transform: rotateY(180deg); }
+      .flip-container {
+        perspective: 800px;
+      }
+      .flip-card {
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        transform-style: preserve-3d;
+      }
+      .flip-card.flipped {
+        transform: rotateY(180deg);
+      }
+      .flip-face {
+        backface-visibility: hidden;
+        position: absolute;
+        inset: 0;
+      }
+      .flip-back {
+        transform: rotateY(180deg);
+      }
       /* Animations */
       @keyframes speakerPulse {
-        0%, 100% { box-shadow: 0 0 0 0 rgba(224,122,95,0.35); }
-        50% { box-shadow: 0 0 0 8px rgba(224,122,95,0); }
+        0%,
+        100% {
+          box-shadow: 0 0 0 0 rgba(224, 122, 95, 0.35);
+        }
+        50% {
+          box-shadow: 0 0 0 8px rgba(224, 122, 95, 0);
+        }
       }
       @keyframes bubbleIn {
-        from { opacity: 0; transform: translateY(6px); }
-        to { opacity: 1; transform: translateY(0); }
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
       @keyframes modalIn {
-        from { opacity: 0; transform: scale(0.93); }
-        to { opacity: 1; transform: scale(1); }
+        from {
+          opacity: 0;
+          transform: scale(0.93);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
       }
       @keyframes toastIn {
-        from { opacity: 0; transform: translateY(12px); }
-        to { opacity: 1; transform: translateY(0); }
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
       @keyframes toastOut {
-        from { opacity: 1; transform: translateY(0); }
-        to { opacity: 0; transform: translateY(12px); }
+        from {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        to {
+          opacity: 0;
+          transform: translateY(12px);
+        }
       }
       @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
       }
       @keyframes dotPulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.4; }
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.4;
+        }
       }
-      .animate-bubble { animation: bubbleIn 0.25s ease-out both; }
-      .animate-modal { animation: modalIn 0.3s ease-out both; }
-      .animate-toast-in { animation: toastIn 0.3s ease-out both; }
-      .animate-toast-out { animation: toastOut 0.3s ease-in both; }
-      .animate-fade { animation: fadeIn 0.3s ease-out both; }
-      .animate-pulse-speaker { animation: speakerPulse 2s ease-in-out infinite; }
-      .btn-lift { transition: all 0.2s ease; }
-      .btn-lift:hover:not(:disabled) { transform: translateY(-1px); }
-      .btn-lift:active:not(:disabled) { transform: translateY(0); }
+      .animate-bubble {
+        animation: bubbleIn 0.25s ease-out both;
+      }
+      .animate-modal {
+        animation: modalIn 0.3s ease-out both;
+      }
+      .animate-toast-in {
+        animation: toastIn 0.3s ease-out both;
+      }
+      .animate-toast-out {
+        animation: toastOut 0.3s ease-in both;
+      }
+      .animate-fade {
+        animation: fadeIn 0.3s ease-out both;
+      }
+      .animate-pulse-speaker {
+        animation: speakerPulse 2s ease-in-out infinite;
+      }
+      .btn-lift {
+        transition: all 0.2s ease;
+      }
+      .btn-lift:hover:not(:disabled) {
+        transform: translateY(-1px);
+      }
+      .btn-lift:active:not(:disabled) {
+        transform: translateY(0);
+      }
     </style>
   </head>
   <body class="min-h-screen bg-cream">
     <div id="root"></div>
     <script type="text/babel">
-    const { useState, useReducer, useEffect, useRef, useCallback, useContext, createContext, useMemo } = React;
+      const {
+        useState,
+        useReducer,
+        useEffect,
+        useRef,
+        useCallback,
+        useContext,
+        createContext,
+        useMemo,
+      } = React;
 
-    // ============================================================
-    // SECTION 1: Constants & Utilities
-    // ============================================================
-    const AVATAR_COLORS = ['#E07A5F','#81B29A','#F2CC8F','#D4726A','#7EB5D6','#C49BBB','#E8A87C','#85C1E9'];
-    function fmtTime(ts) {
-      const d = new Date(ts || Date.now());
-      return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
-    }
-    function getAvatarColor(idx) { return AVATAR_COLORS[idx % AVATAR_COLORS.length]; }
-
-    // ============================================================
-    // SECTION 2: State Management
-    // ============================================================
-    const GameContext = createContext(null);
-    const initialState = {
-      screen: 'lobby', connected: false,
-      gameId: null, playerId: null, nickname: '',
-      status: 'waiting', phase: 'waiting', round: 1,
-      hostId: null, currentSpeakerId: null,
-      players: [], chat: [],
-      word: null, role: 'unknown', myVoteTargetId: null,
-      error: null, toasts: [], showResult: false,
-      wordCommon: null, wordUndercover: null, wordVersion: 0,
-      resultSnapshot: null, undercoverCount: 1,
-    };
-    function reducer(state, action) {
-      switch (action.type) {
-        case 'SET_NICKNAME': return { ...state, nickname: action.payload };
-        case 'SET_ERROR': return { ...state, error: action.payload };
-        case 'CLEAR_ERROR': return { ...state, error: null };
-        case 'JOIN_SUCCESS': return { ...state, screen: 'game', gameId: action.payload.gameId, playerId: action.payload.playerId, error: null };
-        case 'LEAVE_GAME': return { ...initialState, nickname: state.nickname };
-        case 'WS_CONNECTED': return { ...state, connected: true };
-        case 'WS_DISCONNECTED': return { ...state, connected: false };
-        case 'GAME_STATE_UPDATE': {
-          const g = action.payload;
-          const roundChanged = g.round !== state.round;
-          const statusChanged = g.status !== state.status;
-          // Parse words from system chat when game ends
-          let wordCommon = state.wordCommon;
-          let wordUndercover = state.wordUndercover;
-          if (g.status === 'ended' && g.chat) {
-            const revealMsg = g.chat.find(m => m.playerId === 'system' && m.text && m.text.includes('词语揭晓'));
-            if (revealMsg) {
-              const match = revealMsg.text.match(/平民词[：:]\s*(.+?)[，,]\s*卧底词[：:]\s*(.+)/);
-              if (match) { wordCommon = match[1]; wordUndercover = match[2]; }
-            }
-          }
-          // Detect word reassignment from system chat
-          const newChat = g.chat || [];
-          const oldChatLen = state.chat.length;
-          let wordVer = state.wordVersion;
-          if (newChat.length > oldChatLen) {
-            const newMsgs = newChat.slice(oldChatLen);
-            if (newMsgs.some(m => m.playerId === 'system' && m.text && (m.text.includes('已分配给所有玩家') || m.text.includes('词语已分配')))) {
-              wordVer = state.wordVersion + 1;
-            }
-          }
-          // Build result snapshot when game ends
-          let resultSnapshot = state.resultSnapshot;
-          let showResult = state.showResult;
-          if (statusChanged && g.status === 'ended') {
-            const winMsg = (g.chat || []).find(m => m.playerId === 'system' && m.text && (m.text.includes('平民获胜') || m.text.includes('卧底获胜')));
-            const civilianWin = winMsg ? winMsg.text.includes('平民获胜') : true;
-            resultSnapshot = { players: g.players || [], wordCommon, wordUndercover, civilianWin, myRole: state.role };
-            showResult = true;
-          }
-          return {
-            ...state, status: g.status, phase: g.phase || 'waiting',
-            round: g.round, hostId: g.hostId, currentSpeakerId: g.currentSpeakerId,
-            players: g.players || [], chat: newChat,
-            wordCommon, wordUndercover, wordVersion: wordVer,
-            undercoverCount: g.undercoverCount || state.undercoverCount,
-            myVoteTargetId: (roundChanged || g.status !== 'playing') ? null : state.myVoteTargetId,
-            showResult, resultSnapshot,
-          };
-        }
-        case 'CHAT_MESSAGE': return { ...state, chat: [...state.chat, action.payload] };
-        case 'WORD_LOADED': return { ...state, word: action.payload.word, role: action.payload.role };
-        case 'VOTE_CAST': return { ...state, myVoteTargetId: action.payload };
-        case 'SHOW_RESULT': return { ...state, showResult: true };
-        case 'HIDE_RESULT': return { ...state, showResult: false, resultSnapshot: null };
-        case 'ADD_TOAST': return { ...state, toasts: [...state.toasts, { id: Date.now(), text: action.payload, leaving: false }] };
-        case 'REMOVE_TOAST': return { ...state, toasts: state.toasts.filter(t => t.id !== action.payload) };
-        default: return state;
-      }
-    }
-
-    // ============================================================
-    // SECTION 3: Custom Hooks
-    // ============================================================
-    function useWebSocket(gameId, playerId, dispatch) {
-      const wsRef = useRef(null);
-      const timerRef = useRef(null);
-      useEffect(() => {
-        if (!gameId || !playerId) return;
-        function connect() {
-          const proto = location.protocol === 'https:' ? 'wss' : 'ws';
-          const ws = new WebSocket(`${proto}://${location.host}?gameId=${encodeURIComponent(gameId)}&playerId=${encodeURIComponent(playerId)}`);
-          wsRef.current = ws;
-          ws.onopen = () => dispatch({ type: 'WS_CONNECTED' });
-          ws.onclose = () => {
-            dispatch({ type: 'WS_DISCONNECTED' });
-            timerRef.current = setTimeout(connect, 2000);
-          };
-          ws.onerror = () => {};
-          ws.onmessage = (ev) => {
-            try {
-              const msg = JSON.parse(ev.data);
-              if (msg.type === 'state') dispatch({ type: 'GAME_STATE_UPDATE', payload: msg.data });
-              else if (msg.type === 'chat') dispatch({ type: 'CHAT_MESSAGE', payload: msg.data });
-            } catch(e) { console.error(e); }
-          };
-        }
-        connect();
-        return () => { clearTimeout(timerRef.current); if (wsRef.current) wsRef.current.close(); };
-      }, [gameId, playerId]);
-      const send = useCallback((data) => {
-        if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) wsRef.current.send(JSON.stringify(data));
-      }, []);
-      return { send };
-    }
-
-    function useApi(dispatch) {
-      const toast = useCallback((msg) => dispatch({ type: 'ADD_TOAST', payload: msg }), [dispatch]);
-      return useMemo(() => ({
-        async createGame() {
-          const res = await fetch('/api/games', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) });
-          const data = await res.json();
-          if (!res.ok) throw new Error(data.error || '创建房间失败');
-          return data;
-        },
-        async joinGame(gameId, name) {
-          const res = await fetch(`/api/games/${encodeURIComponent(gameId)}/join`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name }) });
-          const data = await res.json();
-          if (!res.ok) throw new Error(data.error || '加入房间失败');
-          return data;
-        },
-        async leaveGame(gameId, playerId) {
-          const res = await fetch(`/api/games/${encodeURIComponent(gameId)}/leave`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ playerId }) });
-          const data = await res.json();
-          if (!res.ok) throw new Error(data.error || '离开房间失败');
-          return data;
-        },
-        async startGame(gameId, playerId, undercoverCount) {
-          const res = await fetch(`/api/games/${encodeURIComponent(gameId)}/start`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ undercoverCount, playerId }) });
-          const data = await res.json();
-          if (!res.ok) throw new Error(data.error || '开始游戏失败');
-          return data;
-        },
-        async restartGame(gameId, playerId) {
-          const res = await fetch(`/api/games/${encodeURIComponent(gameId)}/restart`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ undercoverCount: 1, playerId }) });
-          const data = await res.json();
-          if (!res.ok) throw new Error(data.error || '重新开始失败');
-          return data;
-        },
-        async rerollWords(gameId, playerId) {
-          const res = await fetch(`/api/games/${encodeURIComponent(gameId)}/reroll-words`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ playerId }) });
-          const data = await res.json();
-          if (!res.ok) throw new Error(data.error || '更换词语失败');
-          toast('词语已更换');
-          return data;
-        },
-        async updateSettings(gameId, playerId, settings) {
-          const res = await fetch(`/api/games/${encodeURIComponent(gameId)}/settings`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ playerId, ...settings }) });
-          const data = await res.json();
-          if (!res.ok) throw new Error(data.error || '修改设置失败');
-          return data;
-        },
-        async fetchWord(gameId, playerId) {
-          try {
-            const res = await fetch(`/api/games/${encodeURIComponent(gameId)}/word?playerId=${encodeURIComponent(playerId)}`);
-            const data = await res.json();
-            if (res.ok) dispatch({ type: 'WORD_LOADED', payload: data });
-          } catch(e) { console.warn(e); }
-        }
-      }), [dispatch, toast]);
-    }
-
-    function useAutoScroll(dep) {
-      const ref = useRef(null);
-      const atBottom = useRef(true);
-      useEffect(() => {
-        const el = ref.current;
-        if (!el) return;
-        const handler = () => { atBottom.current = el.scrollHeight - el.scrollTop - el.clientHeight < 50; };
-        el.addEventListener('scroll', handler);
-        return () => el.removeEventListener('scroll', handler);
-      }, []);
-      useEffect(() => {
-        if (atBottom.current && ref.current) ref.current.scrollTop = ref.current.scrollHeight;
-      }, [dep]);
-      return ref;
-    }
-
-    // ============================================================
-    // SECTION 4: Shared Components
-    // ============================================================
-    function Toast() {
-      const { state, dispatch } = useContext(GameContext);
-      useEffect(() => {
-        state.toasts.forEach(t => {
-          if (!t._timer) {
-            t._timer = true;
-            setTimeout(() => dispatch({ type: 'REMOVE_TOAST', payload: t.id }), 3000);
-          }
-        });
-      }, [state.toasts]);
-      if (!state.toasts.length) return null;
-      return (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 items-center">
-          {state.toasts.map(t => (
-            <div key={t.id} className="animate-toast-in bg-warm-900 text-white px-4 py-2 rounded-xl text-sm shadow-lg">
-              {t.text}
-            </div>
-          ))}
-        </div>
-      );
-    }
-
-    function ConnectionBadge({ connected }) {
-      return (
-        <div className={`fixed top-3 right-3 z-40 px-2.5 py-1 rounded-full text-xs font-medium border transition-colors ${
-          connected ? 'bg-sage-50 border-sage-500/40 text-sage-600' : 'bg-rose-50 border-rose-500/40 text-rose-500'
-        }`}>
-          {connected ? '已连接' : '未连接'}
-        </div>
-      );
-    }
-
-    function PlayerAvatar({ name, index, size = 'md', alive = true }) {
-      const color = getAvatarColor(index);
-      const sizes = { sm: 'w-7 h-7 text-xs', md: 'w-9 h-9 text-sm', lg: 'w-12 h-12 text-base' };
-      return (
-        <div className={`${sizes[size]} rounded-full flex items-center justify-center font-semibold text-white shrink-0 ${!alive ? 'opacity-40 grayscale' : ''}`}
-          style={{ backgroundColor: color }}>
-          {(name || '?')[0]}
-        </div>
-      );
-    }
-
-    // ============================================================
-    // SECTION 5: Lobby Components
-    // ============================================================
-    function LobbyView() {
-      const { state, dispatch, api } = useContext(GameContext);
-      const [nickname, setNickname] = useState(() => {
-        return localStorage.getItem('wis_nickname') || state.nickname || ('玩家-' + Math.random().toString(36).slice(2, 6));
-      });
-      const [joinId, setJoinId] = useState('');
-      const [loading, setLoading] = useState(false);
-      const [error, setError] = useState('');
-
-      async function handleCreate() {
-        if (!nickname.trim()) { setError('请输入昵称'); return; }
-        setError(''); setLoading(true);
-        try {
-          const data = await api.createGame();
-          const joinData = await api.joinGame(data.gameId, nickname.trim());
-          dispatch({ type: 'SET_NICKNAME', payload: nickname.trim() });
-          localStorage.setItem('wis_nickname', nickname.trim());
-          dispatch({ type: 'JOIN_SUCCESS', payload: joinData });
-        } catch(e) { setError(e.message); }
-        setLoading(false);
-      }
-
-      async function handleJoin() {
-        if (!nickname.trim()) { setError('请输入昵称'); return; }
-        if (!joinId.trim()) { setError('请输入房间号'); return; }
-        setError(''); setLoading(true);
-        try {
-          const data = await api.joinGame(joinId.trim(), nickname.trim());
-          dispatch({ type: 'SET_NICKNAME', payload: nickname.trim() });
-          localStorage.setItem('wis_nickname', nickname.trim());
-          dispatch({ type: 'JOIN_SUCCESS', payload: data });
-        } catch(e) { setError(e.message); }
-        setLoading(false);
-      }
-
-      return (
-        <div className="min-h-screen flex items-center justify-center p-4 bg-dots">
-          <div className="w-full max-w-sm animate-fade">
-            {/* Hero */}
-            <div className="text-center mb-8">
-              <div className="inline-flex items-center gap-2 mb-3">
-                <span className="text-3xl">🎭</span>
-              </div>
-              <h1 className="font-serif text-3xl font-bold text-warm-900 mb-2">谁是卧底</h1>
-              <p className="text-warm-500 text-sm">随机词语 · 轮流发言 · 在线投票</p>
-            </div>
-            {/* Card */}
-            <div className="bg-white rounded-2xl shadow-lg border border-warm-100 p-6">
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-xs font-medium text-warm-500 mb-1.5">你的昵称</label>
-                  <input value={nickname} onChange={e => setNickname(e.target.value)}
-                    className="w-full rounded-xl border border-warm-100 bg-cream-50 px-3.5 py-2.5 text-sm outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition"
-                    placeholder="输入昵称" maxLength={20} />
-                </div>
-                <button onClick={handleCreate} disabled={loading}
-                  className="w-full btn-lift rounded-xl bg-primary-500 hover:bg-primary-600 text-white font-medium py-2.5 text-sm shadow-md shadow-primary-500/25 disabled:opacity-50 transition">
-                  {loading ? '创建中...' : '创建新房间'}
-                </button>
-                <div className="flex items-center gap-3">
-                  <div className="flex-1 h-px bg-warm-100"></div>
-                  <span className="text-xs text-warm-300">或</span>
-                  <div className="flex-1 h-px bg-warm-100"></div>
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-warm-500 mb-1.5">加入已有房间</label>
-                  <div className="flex gap-2">
-                    <input value={joinId} onChange={e => setJoinId(e.target.value)}
-                      className="flex-1 rounded-xl border border-warm-100 bg-cream-50 px-3.5 py-2.5 text-sm font-mono outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition"
-                      placeholder="输入房间号" onKeyDown={e => e.key === 'Enter' && handleJoin()} />
-                    <button onClick={handleJoin} disabled={loading}
-                      className="btn-lift rounded-xl border-2 border-primary-500 text-primary-500 hover:bg-primary-50 font-medium px-4 py-2.5 text-sm disabled:opacity-50 transition">
-                      加入
-                    </button>
-                  </div>
-                </div>
-                {error && (
-                  <div className="rounded-xl bg-rose-50 border border-rose-500/30 px-3 py-2 text-xs text-rose-500">{error}</div>
-                )}
-              </div>
-            </div>
-            <p className="text-center text-xs text-warm-300 mt-4">创建房间后分享房间号给好友即可开始游戏</p>
-          </div>
-        </div>
-      );
-    }
-
-    // ============================================================
-    // SECTION 6: Game Components
-    // ============================================================
-    function PhaseIndicator({ phase, status }) {
-      const steps = [
-        { key: 'waiting', label: '等待' },
-        { key: 'speaking', label: '发言' },
-        { key: 'voting', label: '投票' },
+      // ============================================================
+      // SECTION 1: Constants & Utilities
+      // ============================================================
+      const AVATAR_COLORS = [
+        "#E07A5F",
+        "#81B29A",
+        "#F2CC8F",
+        "#D4726A",
+        "#7EB5D6",
+        "#C49BBB",
+        "#E8A87C",
+        "#85C1E9",
       ];
-      const currentIdx = status === 'ended' ? 3 : steps.findIndex(s => s.key === phase);
-      return (
-        <div className="flex items-center gap-1">
-          {steps.map((s, i) => (
-            <React.Fragment key={s.key}>
-              {i > 0 && <div className={`w-5 h-0.5 rounded ${i <= currentIdx ? 'bg-primary-500' : 'bg-warm-100'}`} />}
-              <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium transition-colors ${
-                i === currentIdx ? 'bg-primary-500 text-white' : i < currentIdx ? 'bg-primary-100 text-primary-600' : 'bg-cream-300 text-warm-300'
-              }`}>
-                {i === currentIdx && status === 'playing' && <span className="w-1.5 h-1.5 rounded-full bg-white" style={{ animation: 'dotPulse 1.5s ease-in-out infinite' }} />}
-                {s.label}
-              </div>
-            </React.Fragment>
-          ))}
-          {status === 'ended' && (
-            <>
-              <div className="w-5 h-0.5 rounded bg-rose-500" />
-              <div className="px-2 py-0.5 rounded-full text-xs font-medium bg-rose-500 text-white">结束</div>
-            </>
-          )}
-        </div>
-      );
-    }
+      function fmtTime(ts) {
+        const d = new Date(ts || Date.now());
+        return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+      }
+      function getAvatarColor(idx) {
+        return AVATAR_COLORS[idx % AVATAR_COLORS.length];
+      }
 
-    function GameHeader() {
-      const { state, dispatch, api } = useContext(GameContext);
-      const [copied, setCopied] = useState(false);
-      function copyRoomId() {
-        const text = state.gameId;
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(text).then(() => {
-            setCopied(true);
-            dispatch({ type: 'ADD_TOAST', payload: '房间号已复制' });
-            setTimeout(() => setCopied(false), 2000);
-          }).catch(fallbackCopy);
-        } else {
-          fallbackCopy();
+      // ============================================================
+      // SECTION 2: State Management
+      // ============================================================
+      const GameContext = createContext(null);
+      const initialState = {
+        screen: "lobby",
+        connected: false,
+        gameId: null,
+        playerId: null,
+        nickname: "",
+        status: "waiting",
+        phase: "waiting",
+        round: 1,
+        hostId: null,
+        currentSpeakerId: null,
+        players: [],
+        chat: [],
+        word: null,
+        role: "unknown",
+        myVoteTargetId: null,
+        error: null,
+        toasts: [],
+        showResult: false,
+        wordCommon: null,
+        wordUndercover: null,
+        wordVersion: 0,
+        resultSnapshot: null,
+        undercoverCount: 1,
+        votedPlayerIds: [],
+      };
+      function reducer(state, action) {
+        switch (action.type) {
+          case "SET_NICKNAME":
+            return { ...state, nickname: action.payload };
+          case "SET_ERROR":
+            return { ...state, error: action.payload };
+          case "CLEAR_ERROR":
+            return { ...state, error: null };
+          case "JOIN_SUCCESS":
+            return {
+              ...state,
+              screen: "game",
+              gameId: action.payload.gameId,
+              playerId: action.payload.playerId,
+              error: null,
+            };
+          case "LEAVE_GAME":
+            return { ...initialState, nickname: state.nickname };
+          case "WS_CONNECTED":
+            return { ...state, connected: true };
+          case "WS_DISCONNECTED":
+            return { ...state, connected: false };
+          case "GAME_STATE_UPDATE": {
+            const g = action.payload;
+            const roundChanged = g.round !== state.round;
+            const statusChanged = g.status !== state.status;
+            // Parse words from system chat when game ends
+            let wordCommon = state.wordCommon;
+            let wordUndercover = state.wordUndercover;
+            if (g.status === "ended" && g.chat) {
+              const revealMsg = [...g.chat]
+                .reverse()
+                .find(
+                  (m) =>
+                    m.playerId === "system" &&
+                    m.text &&
+                    m.text.includes("词语揭晓"),
+                );
+              if (revealMsg) {
+                const match = revealMsg.text.match(
+                  /平民词[：:]\s*(.+?)[，,]\s*卧底词[：:]\s*(.+)/,
+                );
+                if (match) {
+                  wordCommon = match[1];
+                  wordUndercover = match[2];
+                }
+              }
+            }
+            // Detect word reassignment from system chat
+            const newChat = g.chat || [];
+            const oldChatLen = state.chat.length;
+            let wordVer = state.wordVersion;
+            if (newChat.length > oldChatLen) {
+              const newMsgs = newChat.slice(oldChatLen);
+              if (
+                newMsgs.some(
+                  (m) =>
+                    m.playerId === "system" &&
+                    m.text &&
+                    (m.text.includes("已分配给所有玩家") ||
+                      m.text.includes("词语已分配")),
+                )
+              ) {
+                wordVer = state.wordVersion + 1;
+              }
+            }
+            // Build result snapshot when game ends
+            let resultSnapshot = state.resultSnapshot;
+            let showResult = state.showResult;
+            if (statusChanged && g.status === "ended") {
+              const winMsg = [...(g.chat || [])]
+                .reverse()
+                .find(
+                  (m) =>
+                    m.playerId === "system" &&
+                    m.text &&
+                    (m.text.includes("平民获胜") ||
+                      m.text.includes("卧底获胜")),
+                );
+              const civilianWin = winMsg
+                ? winMsg.text.includes("平民获胜")
+                : true;
+              resultSnapshot = {
+                players: g.players || [],
+                wordCommon,
+                wordUndercover,
+                civilianWin,
+                myRole: state.role,
+              };
+              showResult = true;
+            }
+            return {
+              ...state,
+              status: g.status,
+              phase: g.phase || "waiting",
+              round: g.round,
+              hostId: g.hostId,
+              currentSpeakerId: g.currentSpeakerId,
+              players: g.players || [],
+              chat: newChat,
+              wordCommon,
+              wordUndercover,
+              wordVersion: wordVer,
+              undercoverCount: g.undercoverCount || state.undercoverCount,
+              myVoteTargetId:
+                roundChanged || g.status !== "playing"
+                  ? null
+                  : state.myVoteTargetId,
+              votedPlayerIds: g.votedPlayerIds || [],
+              showResult,
+              resultSnapshot,
+            };
+          }
+          case "CHAT_MESSAGE":
+            return { ...state, chat: [...state.chat, action.payload] };
+          case "WORD_LOADED":
+            return {
+              ...state,
+              word: action.payload.word,
+              role: action.payload.role,
+            };
+          case "VOTE_CAST":
+            return { ...state, myVoteTargetId: action.payload };
+          case "SHOW_RESULT":
+            return { ...state, showResult: true };
+          case "HIDE_RESULT":
+            return { ...state, showResult: false, resultSnapshot: null };
+          case "ADD_TOAST":
+            return {
+              ...state,
+              toasts: [
+                ...state.toasts,
+                { id: Date.now(), text: action.payload, leaving: false },
+              ],
+            };
+          case "REMOVE_TOAST":
+            return {
+              ...state,
+              toasts: state.toasts.filter((t) => t.id !== action.payload),
+            };
+          default:
+            return state;
         }
-        function fallbackCopy() {
-          const ta = document.createElement('textarea');
-          ta.value = text;
-          ta.style.cssText = 'position:fixed;left:-9999px';
-          document.body.appendChild(ta);
-          ta.select();
-          document.execCommand('copy');
-          document.body.removeChild(ta);
-          setCopied(true);
-          dispatch({ type: 'ADD_TOAST', payload: '房间号已复制' });
-          setTimeout(() => setCopied(false), 2000);
-        }
-      }
-      async function handleLeave() {
-        try {
-          await api.leaveGame(state.gameId, state.playerId);
-          dispatch({ type: 'LEAVE_GAME' });
-        } catch(e) { dispatch({ type: 'ADD_TOAST', payload: e.message }); }
-      }
-      const hostPlayer = state.players.find(p => p.id === state.hostId);
-      return (
-        <div className="bg-white rounded-2xl shadow-sm border border-warm-100 px-4 py-3">
-          <div className="flex items-center justify-between gap-3 flex-wrap">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1.5 cursor-pointer group" onClick={copyRoomId}>
-                <span className="text-xs text-warm-500">房间</span>
-                <span className="font-mono text-sm font-medium text-warm-900 group-hover:text-primary-500 transition">{state.gameId}</span>
-                <svg className="w-3.5 h-3.5 text-warm-300 group-hover:text-primary-500 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
-                </svg>
-              </div>
-              <div className="h-4 w-px bg-warm-100" />
-              <span className="text-xs text-warm-500">第 <span className="font-medium text-warm-700">{state.round}</span> 轮</span>
-              {hostPlayer && (
-                <>
-                  <div className="h-4 w-px bg-warm-100" />
-                  <span className="text-xs text-warm-500">房主: <span className="font-medium text-warm-700">{hostPlayer.name}</span></span>
-                </>
-              )}
-            </div>
-            <div className="flex items-center gap-2">
-              <PhaseIndicator phase={state.phase} status={state.status} />
-              <button onClick={handleLeave} className="text-xs text-warm-300 hover:text-rose-500 transition ml-1">退出</button>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    function WordCard() {
-      const { state } = useContext(GameContext);
-      if (!state.word) return null;
-      return (
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-warm-500">你的词语</span>
-          <span className="font-serif text-lg font-bold text-warm-900 tracking-wider">{state.word}</span>
-        </div>
-      );
-    }
-
-    function HostControls() {
-      const { state, api, dispatch } = useContext(GameContext);
-      const isHost = state.playerId === state.hostId;
-      if (!isHost) return null;
-      const uc = state.undercoverCount || 1;
-      const minPlayers = uc + 2;
-      const isWaitingOrEnded = state.status === 'waiting' || state.status === 'ended';
-      const canStart = state.players.length >= minPlayers && isWaitingOrEnded;
-      const canReroll = isWaitingOrEnded;
-      const canChangeSetting = state.status === 'waiting';
-
-      async function handleStart() {
-        try {
-          if (state.status === 'ended') await api.restartGame(state.gameId, state.playerId);
-          else await api.startGame(state.gameId, state.playerId, uc);
-          await api.fetchWord(state.gameId, state.playerId);
-        } catch(e) { dispatch({ type: 'ADD_TOAST', payload: e.message }); }
-      }
-      async function handleReroll() {
-        try { await api.rerollWords(state.gameId, state.playerId); } catch(e) { dispatch({ type: 'ADD_TOAST', payload: e.message }); }
-      }
-      async function handleUcChange(val) {
-        try { await api.updateSettings(state.gameId, state.playerId, { undercoverCount: val }); } catch(e) { dispatch({ type: 'ADD_TOAST', payload: e.message }); }
-      }
-      return (
-        <div className="flex items-center gap-2">
-          {canChangeSetting && (
-            <div className="flex items-center gap-1.5">
-              <span className="text-xs text-warm-500">卧底</span>
-              <div className="flex rounded-lg border border-warm-100 overflow-hidden">
-                {[1, 2, 3].map(n => (
-                  <button key={n} onClick={() => handleUcChange(n)}
-                    className={`px-2.5 py-1 text-xs font-medium transition ${uc === n ? 'bg-primary-500 text-white' : 'bg-white text-warm-500 hover:bg-cream-200'}`}>
-                    {n}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-          {canReroll && (
-            <button onClick={handleReroll} className="btn-lift rounded-xl border-2 border-warm-100 text-warm-500 hover:border-primary-500 hover:text-primary-500 px-4 py-2 text-sm font-medium transition">
-              更换词语
-            </button>
-          )}
-          {isWaitingOrEnded && (
-            <button onClick={handleStart} disabled={!canStart}
-              className="btn-lift rounded-xl bg-primary-500 hover:bg-primary-600 text-white px-5 py-2 text-sm font-medium shadow-md shadow-primary-500/25 disabled:opacity-50 transition">
-              {state.status === 'ended' ? '再来一局' : `开始游戏${!canStart ? ` (需${minPlayers}人)` : ''}`}
-            </button>
-          )}
-        </div>
-      );
-    }
-
-    function PlayerCard({ player, index, isHost, isSelf, isSpeaking, isVoteTarget, canVote, onVote }) {
-      return (
-        <div className={`flex items-center justify-between rounded-xl px-3 py-2.5 transition-all ${
-          !player.alive ? 'opacity-50 bg-cream-300/50' :
-          isSpeaking ? 'bg-primary-50 border-2 border-primary-500/50 animate-pulse-speaker' :
-          isVoteTarget ? 'bg-amber-50 border-2 border-amber-500/50' :
-          'bg-white border-2 border-warm-100'
-        }`}>
-          <div className="flex items-center gap-2.5">
-            <PlayerAvatar name={player.name} index={index} alive={player.alive} />
-            <div>
-              <div className="flex items-center gap-1.5">
-                <span className={`text-sm font-medium ${player.alive ? 'text-warm-900' : 'text-warm-300 line-through'}`}>
-                  {player.name}{isSelf ? ' (你)' : ''}
-                </span>
-                {isHost && <span className="px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-600 text-[10px] font-medium">房主</span>}
-                {isSpeaking && <span className="px-1.5 py-0.5 rounded-md bg-primary-100 text-primary-600 text-[10px] font-medium">发言中</span>}
-              </div>
-              {!player.alive && <span className="text-[10px] text-warm-300">已淘汰</span>}
-            </div>
-          </div>
-          {canVote && (
-            <button onClick={() => onVote(player.id)} disabled={isVoteTarget}
-              className={`btn-lift px-3 py-1.5 rounded-lg text-xs font-medium transition ${
-                isVoteTarget ? 'bg-amber-500 text-white' : 'bg-cream-200 text-warm-700 hover:bg-amber-100 hover:text-amber-600'
-              }`}>
-              {isVoteTarget ? '已投' : '投票'}
-            </button>
-          )}
-        </div>
-      );
-    }
-
-    function PlayersPanel() {
-      const { state, ws } = useContext(GameContext);
-      const dispatch = useContext(GameContext).dispatch;
-      const me = state.players.find(p => p.id === state.playerId);
-      const amAlive = me && me.alive;
-      const isVoting = state.status === 'playing' && state.phase === 'voting';
-
-      function handleVote(targetId) {
-        if (state.myVoteTargetId) return;
-        ws.send({ type: 'vote', targetId });
-        dispatch({ type: 'VOTE_CAST', payload: targetId });
       }
 
-      return (
-        <div className="bg-white rounded-2xl shadow-sm border border-warm-100 p-4 flex flex-col min-h-0 overflow-hidden">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-xs font-semibold text-warm-500 uppercase tracking-wider">玩家 ({state.players.length})</h3>
-            {isVoting && <span className="text-[10px] text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">投票阶段</span>}
-            {!isVoting && state.status !== 'playing' && <span className="text-[10px] text-warm-300 bg-cream-200 px-2 py-0.5 rounded-full">卧底{state.undercoverCount}人 · 至少{(state.undercoverCount || 1) + 2}人</span>}
-          </div>
-          <div className="space-y-2 scroll-thin overflow-y-auto flex-1 min-h-0">
-            {state.players.map((p, i) => (
-              <PlayerCard key={p.id} player={p} index={i}
-                isHost={p.id === state.hostId} isSelf={p.id === state.playerId}
-                isSpeaking={state.currentSpeakerId === p.id && state.phase === 'speaking'}
-                isVoteTarget={state.myVoteTargetId === p.id}
-                canVote={isVoting && amAlive && p.alive && p.id !== state.playerId && !state.myVoteTargetId}
-                onVote={handleVote} />
-            ))}
-            {!state.players.length && <div className="text-xs text-warm-300 text-center py-4">等待玩家加入...</div>}
-          </div>
-        </div>
-      );
-    }
+      // ============================================================
+      // SECTION 3: Custom Hooks
+      // ============================================================
+      function useWebSocket(gameId, playerId, dispatch) {
+        const wsRef = useRef(null);
+        const timerRef = useRef(null);
+        useEffect(() => {
+          if (!gameId || !playerId) return;
+          function connect() {
+            const proto = location.protocol === "https:" ? "wss" : "ws";
+            const ws = new WebSocket(
+              `${proto}://${location.host}?gameId=${encodeURIComponent(gameId)}&playerId=${encodeURIComponent(playerId)}`,
+            );
+            wsRef.current = ws;
+            ws.onopen = () => dispatch({ type: "WS_CONNECTED" });
+            ws.onclose = () => {
+              dispatch({ type: "WS_DISCONNECTED" });
+              timerRef.current = setTimeout(connect, 2000);
+            };
+            ws.onerror = () => {};
+            ws.onmessage = (ev) => {
+              try {
+                const msg = JSON.parse(ev.data);
+                if (msg.type === "state")
+                  dispatch({ type: "GAME_STATE_UPDATE", payload: msg.data });
+                else if (msg.type === "chat")
+                  dispatch({ type: "CHAT_MESSAGE", payload: msg.data });
+                else if (msg.type === "kicked") {
+                  dispatch({
+                    type: "ADD_TOAST",
+                    payload: "你已被房主踢出房间",
+                  });
+                  dispatch({ type: "LEAVE_GAME" });
+                }
+              } catch (e) {
+                console.error(e);
+              }
+            };
+          }
+          connect();
+          return () => {
+            clearTimeout(timerRef.current);
+            if (wsRef.current) wsRef.current.close();
+          };
+        }, [gameId, playerId]);
+        const send = useCallback((data) => {
+          if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN)
+            wsRef.current.send(JSON.stringify(data));
+        }, []);
+        return { send };
+      }
 
-    function ChatBubble({ msg, isSelf, playerIndex }) {
-      if (msg.playerId === 'system') {
+      function useApi(dispatch) {
+        const toast = useCallback(
+          (msg) => dispatch({ type: "ADD_TOAST", payload: msg }),
+          [dispatch],
+        );
+        return useMemo(
+          () => ({
+            async createGame() {
+              const res = await fetch("/api/games", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({}),
+              });
+              const data = await res.json();
+              if (!res.ok) throw new Error(data.error || "创建房间失败");
+              return data;
+            },
+            async joinGame(gameId, name) {
+              const res = await fetch(
+                `/api/games/${encodeURIComponent(gameId)}/join`,
+                {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ name }),
+                },
+              );
+              const data = await res.json();
+              if (!res.ok) throw new Error(data.error || "加入房间失败");
+              return data;
+            },
+            async leaveGame(gameId, playerId) {
+              const res = await fetch(
+                `/api/games/${encodeURIComponent(gameId)}/leave`,
+                {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ playerId }),
+                },
+              );
+              const data = await res.json();
+              if (!res.ok) throw new Error(data.error || "离开房间失败");
+              return data;
+            },
+            async startGame(gameId, playerId, undercoverCount) {
+              const res = await fetch(
+                `/api/games/${encodeURIComponent(gameId)}/start`,
+                {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ undercoverCount, playerId }),
+                },
+              );
+              const data = await res.json();
+              if (!res.ok) throw new Error(data.error || "开始游戏失败");
+              return data;
+            },
+            async restartGame(gameId, playerId) {
+              const res = await fetch(
+                `/api/games/${encodeURIComponent(gameId)}/restart`,
+                {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ undercoverCount: 1, playerId }),
+                },
+              );
+              const data = await res.json();
+              if (!res.ok) throw new Error(data.error || "重新开始失败");
+              return data;
+            },
+            async rerollWords(gameId, playerId) {
+              const res = await fetch(
+                `/api/games/${encodeURIComponent(gameId)}/reroll-words`,
+                {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ playerId }),
+                },
+              );
+              const data = await res.json();
+              if (!res.ok) throw new Error(data.error || "更换词语失败");
+              toast("词语已更换");
+              return data;
+            },
+            async updateSettings(gameId, playerId, settings) {
+              const res = await fetch(
+                `/api/games/${encodeURIComponent(gameId)}/settings`,
+                {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ playerId, ...settings }),
+                },
+              );
+              const data = await res.json();
+              if (!res.ok) throw new Error(data.error || "修改设置失败");
+              return data;
+            },
+            async fetchWord(gameId, playerId) {
+              try {
+                const res = await fetch(
+                  `/api/games/${encodeURIComponent(gameId)}/word?playerId=${encodeURIComponent(playerId)}`,
+                );
+                const data = await res.json();
+                if (res.ok) dispatch({ type: "WORD_LOADED", payload: data });
+              } catch (e) {
+                console.warn(e);
+              }
+            },
+            async kickPlayer(gameId, playerId, targetPlayerId) {
+              const res = await fetch(
+                `/api/games/${encodeURIComponent(gameId)}/kick`,
+                {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ playerId, targetPlayerId }),
+                },
+              );
+              const data = await res.json();
+              if (!res.ok) throw new Error(data.error || "踢出玩家失败");
+              return data;
+            },
+          }),
+          [dispatch, toast],
+        );
+      }
+
+      function useAutoScroll(dep) {
+        const ref = useRef(null);
+        const atBottom = useRef(true);
+        useEffect(() => {
+          const el = ref.current;
+          if (!el) return;
+          const handler = () => {
+            atBottom.current =
+              el.scrollHeight - el.scrollTop - el.clientHeight < 50;
+          };
+          el.addEventListener("scroll", handler);
+          return () => el.removeEventListener("scroll", handler);
+        }, []);
+        useEffect(() => {
+          if (atBottom.current && ref.current)
+            ref.current.scrollTop = ref.current.scrollHeight;
+        }, [dep]);
+        return ref;
+      }
+
+      // ============================================================
+      // SECTION 4: Shared Components
+      // ============================================================
+      function Toast() {
+        const { state, dispatch } = useContext(GameContext);
+        useEffect(() => {
+          state.toasts.forEach((t) => {
+            if (!t._timer) {
+              t._timer = true;
+              setTimeout(
+                () => dispatch({ type: "REMOVE_TOAST", payload: t.id }),
+                3000,
+              );
+            }
+          });
+        }, [state.toasts]);
+        if (!state.toasts.length) return null;
         return (
-          <div className="flex justify-center my-2 animate-bubble">
-            <div className="bg-amber-50 border border-amber-500/20 rounded-full px-3 py-1 text-[11px] text-amber-600 max-w-[85%] text-center">
-              {msg.text}
+          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 items-center">
+            {state.toasts.map((t) => (
+              <div
+                key={t.id}
+                className="animate-toast-in bg-warm-900 text-white px-4 py-2 rounded-xl text-sm shadow-lg"
+              >
+                {t.text}
+              </div>
+            ))}
+          </div>
+        );
+      }
+
+      function ConnectionBadge({ connected }) {
+        return (
+          <div
+            className={`fixed top-3 right-3 z-40 px-2.5 py-1 rounded-full text-xs font-medium border transition-colors ${
+              connected
+                ? "bg-sage-50 border-sage-500/40 text-sage-600"
+                : "bg-rose-50 border-rose-500/40 text-rose-500"
+            }`}
+          >
+            {connected ? "已连接" : "未连接"}
+          </div>
+        );
+      }
+
+      function PlayerAvatar({ name, index, size = "md", alive = true }) {
+        const color = getAvatarColor(index);
+        const sizes = {
+          sm: "w-7 h-7 text-xs",
+          md: "w-9 h-9 text-sm",
+          lg: "w-12 h-12 text-base",
+        };
+        return (
+          <div
+            className={`${sizes[size]} rounded-full flex items-center justify-center font-semibold text-white shrink-0 ${!alive ? "opacity-40 grayscale" : ""}`}
+            style={{ backgroundColor: color }}
+          >
+            {(name || "?")[0]}
+          </div>
+        );
+      }
+
+      // ============================================================
+      // SECTION 5: Lobby Components
+      // ============================================================
+      function LobbyView() {
+        const { state, dispatch, api } = useContext(GameContext);
+        const [nickname, setNickname] = useState(() => {
+          return (
+            localStorage.getItem("wis_nickname") ||
+            state.nickname ||
+            "玩家-" + Math.random().toString(36).slice(2, 6)
+          );
+        });
+        const [joinId, setJoinId] = useState("");
+        const [loading, setLoading] = useState(false);
+        const [error, setError] = useState("");
+
+        async function handleCreate() {
+          if (!nickname.trim()) {
+            setError("请输入昵称");
+            return;
+          }
+          setError("");
+          setLoading(true);
+          try {
+            const data = await api.createGame();
+            const joinData = await api.joinGame(data.gameId, nickname.trim());
+            dispatch({ type: "SET_NICKNAME", payload: nickname.trim() });
+            localStorage.setItem("wis_nickname", nickname.trim());
+            dispatch({ type: "JOIN_SUCCESS", payload: joinData });
+          } catch (e) {
+            setError(e.message);
+          }
+          setLoading(false);
+        }
+
+        async function handleJoin() {
+          if (!nickname.trim()) {
+            setError("请输入昵称");
+            return;
+          }
+          if (!joinId.trim()) {
+            setError("请输入房间号");
+            return;
+          }
+          setError("");
+          setLoading(true);
+          try {
+            const data = await api.joinGame(joinId.trim(), nickname.trim());
+            dispatch({ type: "SET_NICKNAME", payload: nickname.trim() });
+            localStorage.setItem("wis_nickname", nickname.trim());
+            dispatch({ type: "JOIN_SUCCESS", payload: data });
+          } catch (e) {
+            setError(e.message);
+          }
+          setLoading(false);
+        }
+
+        return (
+          <div className="min-h-screen flex items-center justify-center p-4 bg-dots">
+            <div className="w-full max-w-sm animate-fade">
+              {/* Hero */}
+              <div className="text-center mb-8">
+                <div className="inline-flex items-center gap-2 mb-3">
+                  <span className="text-3xl">🎭</span>
+                </div>
+                <h1 className="font-serif text-3xl font-bold text-warm-900 mb-2">
+                  谁是卧底
+                </h1>
+                <p className="text-warm-500 text-sm">
+                  随机词语 · 轮流发言 · 在线投票
+                </p>
+              </div>
+              {/* Card */}
+              <div className="bg-white rounded-2xl shadow-lg border border-warm-100 p-6">
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-medium text-warm-500 mb-1.5">
+                      你的昵称
+                    </label>
+                    <input
+                      value={nickname}
+                      onChange={(e) => setNickname(e.target.value)}
+                      className="w-full rounded-xl border border-warm-100 bg-cream-50 px-3.5 py-2.5 text-sm outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition"
+                      placeholder="输入昵称"
+                      maxLength={20}
+                    />
+                  </div>
+                  <button
+                    onClick={handleCreate}
+                    disabled={loading}
+                    className="w-full btn-lift rounded-xl bg-primary-500 hover:bg-primary-600 text-white font-medium py-2.5 text-sm shadow-md shadow-primary-500/25 disabled:opacity-50 transition"
+                  >
+                    {loading ? "创建中..." : "创建新房间"}
+                  </button>
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1 h-px bg-warm-100"></div>
+                    <span className="text-xs text-warm-300">或</span>
+                    <div className="flex-1 h-px bg-warm-100"></div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-warm-500 mb-1.5">
+                      加入已有房间
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        value={joinId}
+                        onChange={(e) => setJoinId(e.target.value)}
+                        className="flex-1 rounded-xl border border-warm-100 bg-cream-50 px-3.5 py-2.5 text-sm font-mono outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition"
+                        placeholder="输入房间号"
+                        onKeyDown={(e) => e.key === "Enter" && handleJoin()}
+                      />
+                      <button
+                        onClick={handleJoin}
+                        disabled={loading}
+                        className="btn-lift rounded-xl border-2 border-primary-500 text-primary-500 hover:bg-primary-50 font-medium px-4 py-2.5 text-sm disabled:opacity-50 transition"
+                      >
+                        加入
+                      </button>
+                    </div>
+                  </div>
+                  {error && (
+                    <div className="rounded-xl bg-rose-50 border border-rose-500/30 px-3 py-2 text-xs text-rose-500">
+                      {error}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <p className="text-center text-xs text-warm-300 mt-4">
+                创建房间后分享房间号给好友即可开始游戏
+              </p>
             </div>
           </div>
         );
       }
-      return (
-        <div className={`flex gap-2 mb-2.5 animate-bubble ${isSelf ? 'flex-row-reverse' : ''}`}>
-          <PlayerAvatar name={msg.name} index={playerIndex} size="sm" />
-          <div className={`max-w-[70%] ${isSelf ? 'items-end' : 'items-start'} flex flex-col`}>
-            <div className={`flex items-center gap-1.5 mb-0.5 ${isSelf ? 'flex-row-reverse' : ''}`}>
-              <span className="text-[11px] font-medium text-warm-700">{msg.name}</span>
-              <span className="text-[10px] text-warm-300">{fmtTime(msg.ts)}</span>
-            </div>
-            <div className={`rounded-2xl px-3 py-2 text-sm ${
-              isSelf ? 'bg-primary-500 text-white rounded-tr-sm' : 'bg-cream-200 text-warm-900 rounded-tl-sm'
-            }`}>
-              {msg.text}
-            </div>
-          </div>
-        </div>
-      );
-    }
 
-    function ChatPanel() {
-      const { state, ws } = useContext(GameContext);
-      const [text, setText] = useState('');
-      const messages = useMemo(() => (state.chat || []).slice().sort((a, b) => a.ts - b.ts), [state.chat]);
-      const chatRef = useAutoScroll(messages);
-
-      const me = state.players.find(p => p.id === state.playerId);
-      const amDead = me && !me.alive && state.status === 'playing';
-      const isSpeakingPhase = state.status === 'playing' && state.phase === 'speaking';
-      const isMyTurn = isSpeakingPhase && state.currentSpeakerId === state.playerId;
-      const disableInput = amDead;
-      const disableSend = amDead || (isSpeakingPhase && state.currentSpeakerId && !isMyTurn);
-
-      function getPlaceholder() {
-        if (amDead) return '你已出局，无法发言';
-        if (isMyTurn) return '描述你的词语...（发送后自动结束发言）';
-        if (isSpeakingPhase) return '等待其他玩家发言...';
-        if (state.phase === 'voting') return '自由讨论...';
-        return '发送消息...';
-      }
-
-      function handleSend() {
-        if (!text.trim() || disableSend) return;
-        ws.send({ type: 'chat', text: text.trim() });
-        setText('');
-      }
-
-      // Build player index map for avatar colors
-      const playerIndexMap = useMemo(() => {
-        const map = {};
-        state.players.forEach((p, i) => { map[p.id] = i; });
-        return map;
-      }, [state.players]);
-
-      // Turn hint
-      const currentSpeaker = state.players.find(p => p.id === state.currentSpeakerId);
-      const turnHint = isMyTurn ? '轮到你发言了!' :
-        (isSpeakingPhase && currentSpeaker) ? `等待 ${currentSpeaker.name} 发言...` :
-        state.phase === 'voting' ? '投票阶段，请在左侧选择投票' : null;
-
-      return (
-        <div className="bg-white rounded-2xl shadow-sm border border-warm-100 p-4 flex flex-col min-h-0 overflow-hidden">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-xs font-semibold text-warm-500 uppercase tracking-wider">聊天</h3>
-            {turnHint && (
-              <span className={`text-[10px] px-2 py-0.5 rounded-full ${
-                isMyTurn ? 'bg-primary-100 text-primary-600 font-medium' : 'bg-cream-200 text-warm-500'
-              }`}>{turnHint}</span>
+      // ============================================================
+      // SECTION 6: Game Components
+      // ============================================================
+      function PhaseIndicator({ phase, status }) {
+        const steps = [
+          { key: "waiting", label: "等待" },
+          { key: "speaking", label: "发言" },
+          { key: "voting", label: "投票" },
+        ];
+        const currentIdx =
+          status === "ended" ? 3 : steps.findIndex((s) => s.key === phase);
+        return (
+          <div className="flex items-center gap-1">
+            {steps.map((s, i) => (
+              <React.Fragment key={s.key}>
+                {i > 0 && (
+                  <div
+                    className={`w-5 h-0.5 rounded ${i <= currentIdx ? "bg-primary-500" : "bg-warm-100"}`}
+                  />
+                )}
+                <div
+                  className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium transition-colors ${
+                    i === currentIdx
+                      ? "bg-primary-500 text-white"
+                      : i < currentIdx
+                        ? "bg-primary-100 text-primary-600"
+                        : "bg-cream-300 text-warm-300"
+                  }`}
+                >
+                  {i === currentIdx && status === "playing" && (
+                    <span
+                      className="w-1.5 h-1.5 rounded-full bg-white"
+                      style={{
+                        animation: "dotPulse 1.5s ease-in-out infinite",
+                      }}
+                    />
+                  )}
+                  {s.label}
+                </div>
+              </React.Fragment>
+            ))}
+            {status === "ended" && (
+              <>
+                <div className="w-5 h-0.5 rounded bg-rose-500" />
+                <div className="px-2 py-0.5 rounded-full text-xs font-medium bg-rose-500 text-white">
+                  结束
+                </div>
+              </>
             )}
           </div>
-          <div ref={chatRef} className="scroll-thin flex-1 min-h-0 overflow-y-auto mb-3 px-1">
-            {messages.length === 0 && <div className="text-xs text-warm-300 text-center py-8">暂无消息</div>}
-            {messages.map((m, i) => (
-              <ChatBubble key={m.id || i} msg={m} isSelf={m.playerId === state.playerId} playerIndex={playerIndexMap[m.playerId] || 0} />
-            ))}
-          </div>
-          <div className="flex gap-2">
-            <input value={text} onChange={e => setText(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleSend()}
-              disabled={disableInput} placeholder={getPlaceholder()}
-              className={`flex-1 rounded-xl border px-3.5 py-2.5 text-sm outline-none transition ${
-                disableInput ? 'bg-cream-300/50 border-warm-100 text-warm-300 cursor-not-allowed' :
-                isMyTurn ? 'bg-white border-primary-500 ring-2 ring-primary-500/20' : 'bg-cream-50 border-warm-100 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'
-              }`} maxLength={200} />
-            <button onClick={handleSend} disabled={disableSend || !text.trim()}
-              className="btn-lift rounded-xl bg-primary-500 hover:bg-primary-600 text-white px-4 py-2.5 text-sm font-medium shadow-sm disabled:opacity-40 transition">
-              发送
-            </button>
-          </div>
-        </div>
-      );
-    }
-
-    function GameResult() {
-      const { state, dispatch, api } = useContext(GameContext);
-      if (!state.showResult || !state.resultSnapshot) return null;
-      const snap = state.resultSnapshot;
-      const isHost = state.playerId === state.hostId;
-
-      async function handleRestart() {
-        try {
-          await api.restartGame(state.gameId, state.playerId);
-        } catch(e) { dispatch({ type: 'ADD_TOAST', payload: e.message }); }
+        );
       }
 
-      return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-warm-900/40 backdrop-blur-sm animate-fade" onClick={() => dispatch({ type: 'HIDE_RESULT' })}>
-          <div className="bg-white rounded-2xl shadow-2xl border border-warm-100 w-full max-w-sm p-6 animate-modal" onClick={e => e.stopPropagation()}>
-            <div className="text-center mb-5">
-              <div className="text-4xl mb-2">{snap.civilianWin ? '🎉' : '🕵️'}</div>
-              <h2 className="font-serif text-2xl font-bold text-warm-900">{snap.civilianWin ? '平民获胜!' : '卧底获胜!'}</h2>
-              {snap.myRole && <p className="text-sm text-warm-500 mt-1">你的身份: {snap.myRole === 'undercover' ? '卧底' : '平民'}</p>}
-            </div>
-            <div className="flex gap-3 mb-5">
-              <div className="flex-1 rounded-xl bg-sage-50 border border-sage-500/30 p-3 text-center">
-                <div className="text-[10px] text-sage-600 mb-1">平民词</div>
-                <div className="font-serif text-lg font-bold text-warm-900">{snap.wordCommon || '?'}</div>
-              </div>
-              <div className="flex-1 rounded-xl bg-rose-50 border border-rose-500/30 p-3 text-center">
-                <div className="text-[10px] text-rose-500 mb-1">卧底词</div>
-                <div className="font-serif text-lg font-bold text-warm-900">{snap.wordUndercover || '?'}</div>
-              </div>
-            </div>
-            <div className="space-y-1.5 mb-5">
-              {snap.players.map((p, i) => (
-                <div key={p.id} className="flex items-center gap-2 text-sm">
-                  <PlayerAvatar name={p.name} index={i} size="sm" alive={p.alive} />
-                  <span className={`flex-1 ${p.alive ? 'text-warm-900' : 'text-warm-300 line-through'}`}>{p.name}</span>
-                  <span className={`text-[10px] ${p.alive ? 'text-sage-600' : 'text-warm-300'}`}>{p.alive ? '存活' : '淘汰'}</span>
+      function GameHeader() {
+        const { state, dispatch, api } = useContext(GameContext);
+        const [copied, setCopied] = useState(false);
+        function copyRoomId() {
+          const text = state.gameId;
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard
+              .writeText(text)
+              .then(() => {
+                setCopied(true);
+                dispatch({ type: "ADD_TOAST", payload: "房间号已复制" });
+                setTimeout(() => setCopied(false), 2000);
+              })
+              .catch(fallbackCopy);
+          } else {
+            fallbackCopy();
+          }
+          function fallbackCopy() {
+            const ta = document.createElement("textarea");
+            ta.value = text;
+            ta.style.cssText = "position:fixed;left:-9999px";
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand("copy");
+            document.body.removeChild(ta);
+            setCopied(true);
+            dispatch({ type: "ADD_TOAST", payload: "房间号已复制" });
+            setTimeout(() => setCopied(false), 2000);
+          }
+        }
+        async function handleLeave() {
+          try {
+            await api.leaveGame(state.gameId, state.playerId);
+            dispatch({ type: "LEAVE_GAME" });
+          } catch (e) {
+            dispatch({ type: "ADD_TOAST", payload: e.message });
+          }
+        }
+        const hostPlayer = state.players.find((p) => p.id === state.hostId);
+        return (
+          <div className="bg-white rounded-2xl shadow-sm border border-warm-100 px-4 py-3">
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <div className="flex items-center gap-3">
+                <div
+                  className="flex items-center gap-1.5 cursor-pointer group"
+                  onClick={copyRoomId}
+                >
+                  <span className="text-xs text-warm-500">房间</span>
+                  <span className="font-mono text-sm font-medium text-warm-900 group-hover:text-primary-500 transition">
+                    {state.gameId}
+                  </span>
+                  <svg
+                    className="w-3.5 h-3.5 text-warm-300 group-hover:text-primary-500 transition"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <rect x="9" y="9" width="13" height="13" rx="2" />
+                    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+                  </svg>
                 </div>
-              ))}
+                <div className="h-4 w-px bg-warm-100" />
+                <span className="text-xs text-warm-500">
+                  第{" "}
+                  <span className="font-medium text-warm-700">
+                    {state.round}
+                  </span>{" "}
+                  轮
+                </span>
+                {hostPlayer && (
+                  <>
+                    <div className="h-4 w-px bg-warm-100" />
+                    <span className="text-xs text-warm-500">
+                      房主:{" "}
+                      <span className="font-medium text-warm-700">
+                        {hostPlayer.name}
+                      </span>
+                    </span>
+                  </>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                <PhaseIndicator phase={state.phase} status={state.status} />
+                <button
+                  onClick={handleLeave}
+                  className="text-xs text-warm-300 hover:text-rose-500 transition ml-1"
+                >
+                  退出
+                </button>
+              </div>
             </div>
-            <div className="flex items-center justify-center gap-3">
-              {isHost && (
-                <button onClick={handleRestart} className="btn-lift rounded-xl bg-primary-500 hover:bg-primary-600 text-white px-5 py-2.5 text-sm font-medium shadow-md shadow-primary-500/25 transition">
-                  再来一局
+          </div>
+        );
+      }
+
+      function WordCard() {
+        const { state } = useContext(GameContext);
+        if (!state.word) return null;
+        return (
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-warm-500">你的词语</span>
+            <span className="font-serif text-lg font-bold text-warm-900 tracking-wider">
+              {state.word}
+            </span>
+          </div>
+        );
+      }
+
+      function HostControls() {
+        const { state, api, dispatch } = useContext(GameContext);
+        const isHost = state.playerId === state.hostId;
+        if (!isHost) return null;
+        const uc = state.undercoverCount || 1;
+        const minPlayers = uc + 2;
+        const isWaitingOrEnded =
+          state.status === "waiting" || state.status === "ended";
+        const canStart = state.players.length >= minPlayers && isWaitingOrEnded;
+        const canReroll = isWaitingOrEnded;
+        const canChangeSetting = state.status === "waiting";
+
+        async function handleStart() {
+          try {
+            if (state.status === "ended")
+              await api.restartGame(state.gameId, state.playerId);
+            else await api.startGame(state.gameId, state.playerId, uc);
+            await api.fetchWord(state.gameId, state.playerId);
+          } catch (e) {
+            dispatch({ type: "ADD_TOAST", payload: e.message });
+          }
+        }
+        async function handleReroll() {
+          try {
+            await api.rerollWords(state.gameId, state.playerId);
+          } catch (e) {
+            dispatch({ type: "ADD_TOAST", payload: e.message });
+          }
+        }
+        async function handleUcChange(val) {
+          try {
+            await api.updateSettings(state.gameId, state.playerId, {
+              undercoverCount: val,
+            });
+          } catch (e) {
+            dispatch({ type: "ADD_TOAST", payload: e.message });
+          }
+        }
+        return (
+          <div className="flex items-center gap-2">
+            {canChangeSetting && (
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs text-warm-500">卧底</span>
+                <div className="flex rounded-lg border border-warm-100 overflow-hidden">
+                  {[1, 2, 3].map((n) => (
+                    <button
+                      key={n}
+                      onClick={() => handleUcChange(n)}
+                      className={`px-2.5 py-1 text-xs font-medium transition ${uc === n ? "bg-primary-500 text-white" : "bg-white text-warm-500 hover:bg-cream-200"}`}
+                    >
+                      {n}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            {canReroll && (
+              <button
+                onClick={handleReroll}
+                className="btn-lift rounded-xl border-2 border-warm-100 text-warm-500 hover:border-primary-500 hover:text-primary-500 px-4 py-2 text-sm font-medium transition"
+              >
+                更换词语
+              </button>
+            )}
+            {isWaitingOrEnded && (
+              <button
+                onClick={handleStart}
+                disabled={!canStart}
+                className="btn-lift rounded-xl bg-primary-500 hover:bg-primary-600 text-white px-5 py-2 text-sm font-medium shadow-md shadow-primary-500/25 disabled:opacity-50 transition"
+              >
+                {state.status === "ended"
+                  ? "再来一局"
+                  : `开始游戏${!canStart ? ` (需${minPlayers}人)` : ""}`}
+              </button>
+            )}
+          </div>
+        );
+      }
+
+      function PlayerCard({
+        player,
+        index,
+        isHost,
+        isSelf,
+        isSpeaking,
+        isVoteTarget,
+        canVote,
+        onVote,
+        canKick,
+        onKick,
+        voteStatus,
+      }) {
+        return (
+          <div
+            className={`flex items-center justify-between rounded-xl px-3 py-2.5 transition-all ${
+              !player.alive
+                ? "opacity-50 bg-cream-300/50"
+                : isSpeaking
+                  ? "bg-primary-50 border-2 border-primary-500/50 animate-pulse-speaker"
+                  : isVoteTarget
+                    ? "bg-amber-50 border-2 border-amber-500/50"
+                    : "bg-white border-2 border-warm-100"
+            }`}
+          >
+            <div className="flex items-center gap-2.5">
+              <PlayerAvatar
+                name={player.name}
+                index={index}
+                alive={player.alive}
+              />
+              <div>
+                <div className="flex items-center gap-1.5">
+                  <span
+                    className={`text-sm font-medium ${player.alive ? "text-warm-900" : "text-warm-300 line-through"}`}
+                  >
+                    {player.name}
+                    {isSelf ? " (你)" : ""}
+                  </span>
+                  {isHost && (
+                    <span className="px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-600 text-[10px] font-medium">
+                      房主
+                    </span>
+                  )}
+                  {isSpeaking && (
+                    <span className="px-1.5 py-0.5 rounded-md bg-primary-100 text-primary-600 text-[10px] font-medium">
+                      发言中
+                    </span>
+                  )}
+                  {voteStatus === "voted" && (
+                    <span className="px-1.5 py-0.5 rounded-md bg-sage-100 text-sage-600 text-[10px] font-medium">
+                      已投票
+                    </span>
+                  )}
+                  {voteStatus === "pending" && (
+                    <span className="px-1.5 py-0.5 rounded-md bg-warm-100 text-warm-400 text-[10px] font-medium">
+                      投票中
+                    </span>
+                  )}
+                </div>
+                {!player.alive && (
+                  <span className="text-[10px] text-warm-300">已淘汰</span>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center gap-1.5">
+              {canVote && (
+                <button
+                  onClick={() => onVote(player.id)}
+                  disabled={isVoteTarget}
+                  className={`btn-lift px-3 py-1.5 rounded-lg text-xs font-medium transition ${
+                    isVoteTarget
+                      ? "bg-amber-500 text-white"
+                      : "bg-cream-200 text-warm-700 hover:bg-amber-100 hover:text-amber-600"
+                  }`}
+                >
+                  {isVoteTarget ? "已投" : "投票"}
                 </button>
               )}
-              <button onClick={() => dispatch({ type: 'HIDE_RESULT' })} className="btn-lift rounded-xl border-2 border-warm-100 text-warm-500 hover:border-warm-300 px-5 py-2.5 text-sm font-medium transition">
-                关闭
+              {canKick && (
+                <button
+                  onClick={() => onKick(player.id)}
+                  className="px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition text-rose-400 hover:bg-rose-50 hover:text-rose-500"
+                >
+                  踢出
+                </button>
+              )}
+            </div>
+          </div>
+        );
+      }
+
+      function PlayersPanel() {
+        const { state, ws, api, dispatch } = useContext(GameContext);
+        const me = state.players.find((p) => p.id === state.playerId);
+        const amAlive = me && me.alive;
+        const isVoting = state.status === "playing" && state.phase === "voting";
+        const isHost = state.playerId === state.hostId;
+
+        function handleVote(targetId) {
+          if (state.myVoteTargetId) return;
+          ws.send({ type: "vote", targetId });
+          dispatch({ type: "VOTE_CAST", payload: targetId });
+        }
+
+        async function handleKick(targetId) {
+          if (!confirm("确定要踢出该玩家吗？")) return;
+          try {
+            await api.kickPlayer(state.gameId, state.playerId, targetId);
+          } catch (e) {
+            dispatch({ type: "ADD_TOAST", payload: e.message });
+          }
+        }
+
+        const votedSet = new Set(state.votedPlayerIds);
+
+        return (
+          <div className="bg-white rounded-2xl shadow-sm border border-warm-100 p-4 flex flex-col min-h-0 overflow-hidden">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-xs font-semibold text-warm-500 uppercase tracking-wider">
+                玩家 ({state.players.length})
+              </h3>
+              {isVoting && (
+                <span className="text-[10px] text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">
+                  投票阶段
+                </span>
+              )}
+              {!isVoting && state.status !== "playing" && (
+                <span className="text-[10px] text-warm-300 bg-cream-200 px-2 py-0.5 rounded-full">
+                  卧底{state.undercoverCount}人 · 至少
+                  {(state.undercoverCount || 1) + 2}人
+                </span>
+              )}
+            </div>
+            <div className="space-y-2 scroll-thin overflow-y-auto flex-1 min-h-0">
+              {state.players.map((p, i) => (
+                <PlayerCard
+                  key={p.id}
+                  player={p}
+                  index={i}
+                  isHost={p.id === state.hostId}
+                  isSelf={p.id === state.playerId}
+                  isSpeaking={
+                    state.currentSpeakerId === p.id &&
+                    state.phase === "speaking"
+                  }
+                  isVoteTarget={state.myVoteTargetId === p.id}
+                  canVote={
+                    isVoting &&
+                    amAlive &&
+                    p.alive &&
+                    p.id !== state.playerId &&
+                    !state.myVoteTargetId
+                  }
+                  onVote={handleVote}
+                  canKick={
+                    isHost &&
+                    p.id !== state.playerId &&
+                    state.status !== "ended"
+                  }
+                  onKick={handleKick}
+                  voteStatus={
+                    isVoting && p.alive
+                      ? votedSet.has(p.id)
+                        ? "voted"
+                        : "pending"
+                      : null
+                  }
+                />
+              ))}
+              {!state.players.length && (
+                <div className="text-xs text-warm-300 text-center py-4">
+                  等待玩家加入...
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      }
+
+      function ChatBubble({ msg, isSelf, playerIndex }) {
+        if (msg.playerId === "system") {
+          return (
+            <div className="flex justify-center my-2 animate-bubble">
+              <div className="bg-amber-50 border border-amber-500/20 rounded-full px-3 py-1 text-[11px] text-amber-600 max-w-[85%] text-center">
+                {msg.text}
+              </div>
+            </div>
+          );
+        }
+        return (
+          <div
+            className={`flex gap-2 mb-2.5 animate-bubble ${isSelf ? "flex-row-reverse" : ""}`}
+          >
+            <PlayerAvatar name={msg.name} index={playerIndex} size="sm" />
+            <div
+              className={`max-w-[70%] ${isSelf ? "items-end" : "items-start"} flex flex-col`}
+            >
+              <div
+                className={`flex items-center gap-1.5 mb-0.5 ${isSelf ? "flex-row-reverse" : ""}`}
+              >
+                <span className="text-[11px] font-medium text-warm-700">
+                  {msg.name}
+                </span>
+                <span className="text-[10px] text-warm-300">
+                  {fmtTime(msg.ts)}
+                </span>
+              </div>
+              <div
+                className={`rounded-2xl px-3 py-2 text-sm ${
+                  isSelf
+                    ? "bg-primary-500 text-white rounded-tr-sm"
+                    : "bg-cream-200 text-warm-900 rounded-tl-sm"
+                }`}
+              >
+                {msg.text}
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      function ChatPanel() {
+        const { state, ws } = useContext(GameContext);
+        const [text, setText] = useState("");
+        const messages = useMemo(
+          () => (state.chat || []).slice().sort((a, b) => a.ts - b.ts),
+          [state.chat],
+        );
+        const chatRef = useAutoScroll(messages);
+
+        const me = state.players.find((p) => p.id === state.playerId);
+        const amDead = me && !me.alive && state.status === "playing";
+        const isSpeakingPhase =
+          state.status === "playing" && state.phase === "speaking";
+        const isMyTurn =
+          isSpeakingPhase && state.currentSpeakerId === state.playerId;
+        const disableInput = amDead;
+        const disableSend =
+          amDead || (isSpeakingPhase && state.currentSpeakerId && !isMyTurn);
+
+        function getPlaceholder() {
+          if (amDead) return "你已出局，无法发言";
+          if (isMyTurn) return "描述你的词语...（发送后自动结束发言）";
+          if (isSpeakingPhase) return "等待其他玩家发言...";
+          if (state.phase === "voting") return "自由讨论...";
+          return "发送消息...";
+        }
+
+        function handleSend() {
+          if (!text.trim() || disableSend) return;
+          ws.send({ type: "chat", text: text.trim() });
+          setText("");
+        }
+
+        // Build player index map for avatar colors
+        const playerIndexMap = useMemo(() => {
+          const map = {};
+          state.players.forEach((p, i) => {
+            map[p.id] = i;
+          });
+          return map;
+        }, [state.players]);
+
+        // Turn hint
+        const currentSpeaker = state.players.find(
+          (p) => p.id === state.currentSpeakerId,
+        );
+        const turnHint = isMyTurn
+          ? "轮到你发言了!"
+          : isSpeakingPhase && currentSpeaker
+            ? `等待 ${currentSpeaker.name} 发言...`
+            : state.phase === "voting"
+              ? "投票阶段，请在左侧选择投票"
+              : null;
+
+        return (
+          <div className="bg-white rounded-2xl shadow-sm border border-warm-100 p-4 flex flex-col min-h-0 overflow-hidden">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-xs font-semibold text-warm-500 uppercase tracking-wider">
+                聊天
+              </h3>
+              {turnHint && (
+                <span
+                  className={`text-[10px] px-2 py-0.5 rounded-full ${
+                    isMyTurn
+                      ? "bg-primary-100 text-primary-600 font-medium"
+                      : "bg-cream-200 text-warm-500"
+                  }`}
+                >
+                  {turnHint}
+                </span>
+              )}
+            </div>
+            <div
+              ref={chatRef}
+              className="scroll-thin flex-1 min-h-0 overflow-y-auto mb-3 px-1"
+            >
+              {messages.length === 0 && (
+                <div className="text-xs text-warm-300 text-center py-8">
+                  暂无消息
+                </div>
+              )}
+              {messages.map((m, i) => (
+                <ChatBubble
+                  key={m.id || i}
+                  msg={m}
+                  isSelf={m.playerId === state.playerId}
+                  playerIndex={playerIndexMap[m.playerId] || 0}
+                />
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <input
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSend()}
+                disabled={disableInput}
+                placeholder={getPlaceholder()}
+                className={`flex-1 rounded-xl border px-3.5 py-2.5 text-sm outline-none transition ${
+                  disableInput
+                    ? "bg-cream-300/50 border-warm-100 text-warm-300 cursor-not-allowed"
+                    : isMyTurn
+                      ? "bg-white border-primary-500 ring-2 ring-primary-500/20"
+                      : "bg-cream-50 border-warm-100 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
+                }`}
+                maxLength={200}
+              />
+              <button
+                onClick={handleSend}
+                disabled={disableSend || !text.trim()}
+                className="btn-lift rounded-xl bg-primary-500 hover:bg-primary-600 text-white px-4 py-2.5 text-sm font-medium shadow-sm disabled:opacity-40 transition"
+              >
+                发送
               </button>
             </div>
           </div>
-        </div>
-      );
-    }
+        );
+      }
 
-    function GameView() {
-      const { state, api } = useContext(GameContext);
-      // Fetch word on mount and when status/round changes
-      useEffect(() => {
-        if (state.gameId && state.playerId) api.fetchWord(state.gameId, state.playerId);
-      }, [state.gameId, state.playerId, state.status, state.round, state.wordVersion]);
+      function GameResult() {
+        const { state, dispatch, api } = useContext(GameContext);
+        if (!state.showResult || !state.resultSnapshot) return null;
+        const snap = state.resultSnapshot;
+        const isHost = state.playerId === state.hostId;
 
-      return (
-        <div className="h-screen bg-dots flex flex-col">
-          <div className="max-w-4xl w-full mx-auto p-3 md:p-4 flex flex-col gap-3 animate-fade flex-1 min-h-0">
-            <GameHeader />
-            {(state.word || state.playerId === state.hostId) && (
-              <div className="bg-white rounded-2xl shadow-sm border border-warm-100 px-4 py-2.5 flex items-center justify-between gap-3">
-                <WordCard />
-                <HostControls />
+        async function handleRestart() {
+          try {
+            await api.restartGame(state.gameId, state.playerId);
+          } catch (e) {
+            dispatch({ type: "ADD_TOAST", payload: e.message });
+          }
+        }
+
+        return (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-warm-900/40 backdrop-blur-sm animate-fade"
+            onClick={() => dispatch({ type: "HIDE_RESULT" })}
+          >
+            <div
+              className="bg-white rounded-2xl shadow-2xl border border-warm-100 w-full max-w-sm p-6 animate-modal"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="text-center mb-5">
+                <div className="text-4xl mb-2">
+                  {snap.civilianWin ? "🎉" : "🕵️"}
+                </div>
+                <h2 className="font-serif text-2xl font-bold text-warm-900">
+                  {snap.civilianWin ? "平民获胜!" : "卧底获胜!"}
+                </h2>
+                {snap.myRole && (
+                  <p className="text-sm text-warm-500 mt-1">
+                    你的身份: {snap.myRole === "undercover" ? "卧底" : "平民"}
+                  </p>
+                )}
               </div>
-            )}
-            <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] flex-1 min-h-0">
-              <PlayersPanel />
-              <ChatPanel />
+              <div className="flex gap-3 mb-5">
+                <div className="flex-1 rounded-xl bg-sage-50 border border-sage-500/30 p-3 text-center">
+                  <div className="text-[10px] text-sage-600 mb-1">平民词</div>
+                  <div className="font-serif text-lg font-bold text-warm-900">
+                    {snap.wordCommon || "?"}
+                  </div>
+                </div>
+                <div className="flex-1 rounded-xl bg-rose-50 border border-rose-500/30 p-3 text-center">
+                  <div className="text-[10px] text-rose-500 mb-1">卧底词</div>
+                  <div className="font-serif text-lg font-bold text-warm-900">
+                    {snap.wordUndercover || "?"}
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-1.5 mb-5">
+                {snap.players.map((p, i) => (
+                  <div key={p.id} className="flex items-center gap-2 text-sm">
+                    <PlayerAvatar
+                      name={p.name}
+                      index={i}
+                      size="sm"
+                      alive={p.alive}
+                    />
+                    <span
+                      className={`flex-1 ${p.alive ? "text-warm-900" : "text-warm-300 line-through"}`}
+                    >
+                      {p.name}
+                    </span>
+                    {p.role === "undercover" ? (
+                      <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-rose-50 text-rose-500 border border-rose-200">
+                        卧底 · {snap.wordUndercover}
+                      </span>
+                    ) : p.role === "civilian" ? (
+                      <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-sage-50 text-sage-600 border border-sage-200">
+                        平民 · {snap.wordCommon}
+                      </span>
+                    ) : (
+                      <span className="text-[10px] text-warm-300">未知</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <div className="flex items-center justify-center gap-3">
+                {/*
+                  {isHost && (
+                  <button
+                    onClick={handleRestart}
+                    className="btn-lift rounded-xl bg-primary-500 hover:bg-primary-600 text-white px-5 py-2.5 text-sm font-medium shadow-md shadow-primary-500/25 transition"
+                  >
+                    再来一局
+                  </button>
+                )}
+                  */}
+                <button
+                  onClick={() => dispatch({ type: "HIDE_RESULT" })}
+                  className="btn-lift rounded-xl border-2 border-warm-100 text-warm-500 hover:border-warm-300 px-5 py-2.5 text-sm font-medium transition"
+                >
+                  关闭
+                </button>
+              </div>
             </div>
           </div>
-          <GameResult />
-        </div>
-      );
-    }
+        );
+      }
 
-    // ============================================================
-    // SECTION 7: App Root
-    // ============================================================
-    function App() {
-      const [state, dispatch] = useReducer(reducer, initialState);
-      const ws = useWebSocket(state.gameId, state.playerId, dispatch);
-      const api = useApi(dispatch);
-      const ctx = useMemo(() => ({ state, dispatch, ws, api }), [state, ws, api]);
-      return (
-        <GameContext.Provider value={ctx}>
-          {state.screen === 'lobby' ? <LobbyView /> : <GameView />}
-          <ConnectionBadge connected={state.connected} />
-          <Toast />
-        </GameContext.Provider>
-      );
-    }
+      function GameView() {
+        const { state, api } = useContext(GameContext);
+        // Fetch word on mount and when status/round changes
+        useEffect(() => {
+          if (state.gameId && state.playerId)
+            api.fetchWord(state.gameId, state.playerId);
+        }, [
+          state.gameId,
+          state.playerId,
+          state.status,
+          state.round,
+          state.wordVersion,
+        ]);
 
-    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+        return (
+          <div className="h-screen bg-dots flex flex-col">
+            <div className="max-w-4xl w-full mx-auto p-3 md:p-4 flex flex-col gap-3 animate-fade flex-1 min-h-0">
+              <GameHeader />
+              {(state.word || state.playerId === state.hostId) && (
+                <div className="bg-white rounded-2xl shadow-sm border border-warm-100 px-4 py-2.5 flex items-center justify-between gap-3">
+                  <WordCard />
+                  <HostControls />
+                </div>
+              )}
+              <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] flex-1 min-h-0">
+                <PlayersPanel />
+                <ChatPanel />
+              </div>
+            </div>
+            <GameResult />
+          </div>
+        );
+      }
+
+      // ============================================================
+      // SECTION 7: App Root
+      // ============================================================
+      function App() {
+        const [state, dispatch] = useReducer(reducer, initialState);
+        const ws = useWebSocket(state.gameId, state.playerId, dispatch);
+        const api = useApi(dispatch);
+        const ctx = useMemo(
+          () => ({ state, dispatch, ws, api }),
+          [state, ws, api],
+        );
+        return (
+          <GameContext.Provider value={ctx}>
+            {state.screen === "lobby" ? <LobbyView /> : <GameView />}
+            <ConnectionBadge connected={state.connected} />
+            <Toast />
+          </GameContext.Provider>
+        );
+      }
+
+      ReactDOM.createRoot(document.getElementById("root")).render(<App />);
     </script>
   </body>
 </html>

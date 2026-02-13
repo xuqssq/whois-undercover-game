@@ -122,21 +122,23 @@ function joinGame(gameId, name) {
 }
 
 // 离开房间逻辑
-function leaveGame(gameId, playerId) {
+function leaveGame(gameId, playerId, reason) {
   const game = games[gameId];
   if (!game) return null;
   const player = game.players[playerId];
   if (!player) return null;
 
+  const kicked = reason === 'kicked';
+
   if (game.status === 'waiting') {
     // 未开始时离开，直接从房间移除
     delete game.players[playerId];
-    addSystemChat(game, `玩家【${player.name}】离开了房间。`);
+    addSystemChat(game, kicked ? `玩家【${player.name}】被房主踢出了房间。` : `玩家【${player.name}】离开了房间。`);
   } else if (game.status === 'playing') {
     // 游戏中离开视为出局
     if (player.alive) {
       player.alive = false;
-      addSystemChat(game, `玩家【${player.name}】中途离开，视为出局。`);
+      addSystemChat(game, kicked ? `玩家【${player.name}】被房主踢出，视为出局。` : `玩家【${player.name}】中途离开，视为出局。`);
       // 如果正轮到他发言，则直接切到下一位或进入投票
       if (game.currentSpeakerId === playerId) {
         if (Array.isArray(game.turnOrder) && game.turnOrder.length > 0) {
@@ -508,6 +510,29 @@ app.post('/api/games/:id/leave', (req, res) => {
   res.json({ ok: true });
 });
 
+// 踢出玩家（仅房主）
+app.post('/api/games/:id/kick', (req, res) => {
+  const { playerId, targetPlayerId } = req.body || {};
+  if (!playerId) return res.status(400).json({ error: 'playerId 必填' });
+  if (!targetPlayerId) return res.status(400).json({ error: 'targetPlayerId 必填' });
+  const game = games[req.params.id];
+  if (!game) return res.status(404).json({ error: '游戏不存在' });
+  if (game.hostId !== playerId) return res.status(403).json({ error: '只有房主可以踢出玩家' });
+  if (playerId === targetPlayerId) return res.status(400).json({ error: '不能踢出自己' });
+  if (!game.players[targetPlayerId]) return res.status(404).json({ error: '目标玩家不存在' });
+
+  // 通知被踢玩家并关闭其连接
+  const targetWs = findPlayerSocket(req.params.id, targetPlayerId);
+  if (targetWs) {
+    targetWs.send(JSON.stringify({ type: 'kicked' }));
+    sockets.delete(targetWs);
+    targetWs.close();
+  }
+
+  leaveGame(req.params.id, targetPlayerId, 'kicked');
+  res.json({ ok: true });
+});
+
 // 修改游戏设置（卧底人数等）
 app.post('/api/games/:id/settings', (req, res) => {
   const { playerId, undercoverCount } = req.body || {};
@@ -747,6 +772,13 @@ wss.on('connection', (ws, req) => {
   });
 });
 
+function findPlayerSocket(gameId, playerId) {
+  for (const [ws, info] of sockets.entries()) {
+    if (info.gameId === gameId && info.playerId === playerId) return ws;
+  }
+  return null;
+}
+
 function broadcast(gameId, payload) {
   const text = JSON.stringify(payload);
   for (const [ws, info] of sockets.entries()) {
@@ -777,11 +809,14 @@ function publicGameState(game) {
     players: Object.values(game.players).map((p) => ({
       id: p.id,
       name: p.name,
-      alive: p.alive
-      // 不暴露 role
+      alive: p.alive,
+      ...(game.status === 'ended' ? { role: p.role } : {})
     })),
     chat: game.chat,
     undercoverCount: game.undercoverCount || 1,
+    votedPlayerIds: game.phase === 'voting'
+      ? game.votes.records.filter((r) => r.round === game.votes.round).map((r) => r.from)
+      : [],
     // 提示词语信息只在本地显示：前端根据当前玩家 id 再查询
     hasStarted: game.status !== 'waiting'
   };
