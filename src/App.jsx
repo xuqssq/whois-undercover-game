@@ -7,7 +7,6 @@ import { useThreeScene } from './hooks/useThreeScene';
 import WorkModeShell from './components/WorkModeShell';
 import LobbyView from './components/LobbyView';
 import GameView from './components/GameView';
-import ConnectionBadge from './components/ConnectionBadge';
 import Toast from './components/Toast';
 
 export default function App() {
@@ -25,7 +24,6 @@ export default function App() {
         <WorkModeShell>
           {state.screen === 'lobby' ? <LobbyView /> : <GameView />}
         </WorkModeShell>
-        <ConnectionBadge connected={state.connected} />
         <Toast />
       </GameContext.Provider>
     </WorkModeProvider>

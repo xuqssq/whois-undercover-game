@@ -1,6 +1,96 @@
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { GameContext } from '../context/GameContext';
 import { useWorkMode } from '../context/WorkModeContext';
+
+const STATUS_MAP = { waiting: '等待中', playing: '进行中' };
+
+function RoomListModal({ open, onClose, rooms, loading, onRefresh, onJoin, isWorkMode: w }) {
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e) => e.key === 'Escape' && onClose();
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [open, onClose]);
+
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+      <div
+        className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl border border-white/50 overflow-hidden animate-fade"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between px-5 py-4 border-b border-warm-100">
+          <h2 className="text-sm font-semibold text-warm-800">
+            {w ? '项目列表' : '房间列表'}
+            {rooms && <span className="ml-1.5 text-warm-400 font-normal">({rooms.length})</span>}
+          </h2>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={onRefresh}
+              disabled={loading}
+              className="text-xs text-primary-500 hover:text-primary-600 transition disabled:opacity-50"
+            >
+              {loading ? '刷新中...' : '刷新'}
+            </button>
+            <button
+              onClick={onClose}
+              className="w-7 h-7 rounded-lg flex items-center justify-center text-warm-400 hover:text-warm-600 hover:bg-warm-50 transition"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div className="min-h-[30vh] max-h-[60vh] overflow-y-auto">
+          {!rooms || loading ? (
+            <div className="px-5 py-12 text-center text-sm text-warm-400">加载中...</div>
+          ) : rooms.length === 0 ? (
+            <div className="px-5 py-12 text-center">
+              <div className="text-warm-300 text-sm">{w ? '暂无可加入的项目' : '暂无可加入的房间'}</div>
+              <div className="text-warm-200 text-xs mt-1">{w ? '返回创建一个新项目吧' : '返回创建一个新房间吧'}</div>
+            </div>
+          ) : (
+            <div className="divide-y divide-warm-100/60">
+              {rooms.map((room) => (
+                <div
+                  key={room.id}
+                  className="flex items-center justify-between px-5 py-3.5 hover:bg-warm-50/50 transition"
+                >
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-mono font-semibold text-warm-700">{room.id}</span>
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded-full border ${
+                        room.status === 'waiting'
+                          ? 'bg-green-50 border-green-200 text-green-600'
+                          : 'bg-amber-50 border-amber-200 text-amber-600'
+                      }`}>
+                        {STATUS_MAP[room.status] || room.status}
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-warm-400 mt-0.5 truncate">
+                      {room.playerNames.length > 0 ? room.playerNames.join('、') : '暂无玩家'}
+                      {' · '}{room.playerCount}人
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => onJoin(room.id)}
+                    className="shrink-0 ml-3 text-xs px-3.5 py-1.5 rounded-lg bg-primary-500 hover:bg-primary-600 text-white font-medium transition"
+                  >
+                    加入
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function LobbyView() {
   const { state, dispatch, api } = useContext(GameContext);
@@ -15,6 +105,7 @@ export default function LobbyView() {
   const [joinId, setJoinId] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [modalOpen, setModalOpen] = useState(false);
   const [rooms, setRooms] = useState(null);
   const [roomsLoading, setRoomsLoading] = useState(false);
 
@@ -62,11 +153,7 @@ export default function LobbyView() {
     setLoading(false);
   }
 
-  async function handleListRooms() {
-    if (rooms !== null) {
-      setRooms(null);
-      return;
-    }
+  async function fetchRooms() {
     setRoomsLoading(true);
     try {
       const list = await api.listRooms();
@@ -77,18 +164,10 @@ export default function LobbyView() {
     setRoomsLoading(false);
   }
 
-  async function handleRefreshRooms() {
-    setRoomsLoading(true);
-    try {
-      const list = await api.listRooms();
-      setRooms(list);
-    } catch (e) {
-      setError(e.message);
-    }
-    setRoomsLoading(false);
+  function handleOpenModal() {
+    setModalOpen(true);
+    fetchRooms();
   }
-
-  const STATUS_MAP = { waiting: '等待中', playing: '进行中' };
 
   return (
     <div className={`${w ? 'min-h-full' : 'min-h-screen'} flex items-center justify-center p-4`}>
@@ -155,72 +234,14 @@ export default function LobbyView() {
             </div>
 
             <button
-              onClick={handleListRooms}
-              disabled={roomsLoading}
-              className="w-full flex items-center justify-center gap-1.5 rounded-xl border border-warm-100 hover:border-warm-200 bg-cream-50 hover:bg-warm-50 text-warm-500 hover:text-warm-700 font-medium py-2.5 text-sm transition disabled:opacity-50"
+              onClick={handleOpenModal}
+              className="w-full flex items-center justify-center gap-1.5 rounded-xl bg-primary-500 hover:bg-primary-600 text-white font-medium py-2.5 text-sm shadow-md shadow-primary-500/25 transition"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
               </svg>
-              {roomsLoading ? '加载中...' : rooms !== null ? '收起列表' : (w ? '浏览已有项目' : '浏览房间列表')}
+              {w ? '浏览已有项目' : '浏览房间列表'}
             </button>
-
-            {rooms !== null && (
-              <div className="rounded-xl border border-warm-100 bg-cream-50 overflow-hidden">
-                <div className="flex items-center justify-between px-3 py-2 border-b border-warm-100">
-                  <span className="text-xs font-medium text-warm-500">
-                    {w ? '项目列表' : '房间列表'} ({rooms.length})
-                  </span>
-                  <button
-                    onClick={handleRefreshRooms}
-                    disabled={roomsLoading}
-                    className="text-xs text-primary-500 hover:text-primary-600 transition disabled:opacity-50"
-                  >
-                    刷新
-                  </button>
-                </div>
-                {rooms.length === 0 ? (
-                  <div className="px-3 py-6 text-center text-xs text-warm-300">
-                    {w ? '暂无项目，创建一个吧' : '暂无房间，创建一个吧'}
-                  </div>
-                ) : (
-                  <div className="max-h-48 overflow-y-auto divide-y divide-warm-100/60">
-                    {rooms.map((room) => (
-                      <div
-                        key={room.id}
-                        className="flex items-center justify-between px-3 py-2.5 hover:bg-warm-50/60 transition"
-                      >
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-mono font-medium text-warm-700">{room.id}</span>
-                            <span className={`text-[10px] px-1.5 py-0.5 rounded-full border ${
-                              room.status === 'waiting'
-                                ? 'bg-green-50 border-green-200 text-green-600'
-                                : 'bg-amber-50 border-amber-200 text-amber-600'
-                            }`}>
-                              {STATUS_MAP[room.status] || room.status}
-                            </span>
-                          </div>
-                          <div className="text-[11px] text-warm-400 mt-0.5 truncate">
-                            {room.playerNames.length > 0
-                              ? room.playerNames.join('、')
-                              : '暂无玩家'}
-                            {' · '}{room.playerCount}{w ? '人' : '人'}
-                          </div>
-                        </div>
-                        <button
-                          onClick={() => handleJoin(room.id)}
-                          disabled={loading}
-                          className="shrink-0 ml-2 text-xs px-3 py-1.5 rounded-lg bg-primary-500 hover:bg-primary-600 text-white font-medium transition disabled:opacity-50"
-                        >
-                          加入
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
 
             {error && (
               <div className="rounded-xl bg-rose-50 border border-rose-500/30 px-3 py-2 text-xs text-rose-500">
@@ -233,6 +254,16 @@ export default function LobbyView() {
           {w ? '创建项目后分享编号给同事即可开始协作' : '创建房间后分享房间号给好友即可开始游戏'}
         </p>
       </div>
+
+      <RoomListModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        rooms={rooms}
+        loading={roomsLoading}
+        onRefresh={fetchRooms}
+        onJoin={(id) => { setModalOpen(false); handleJoin(id); }}
+        isWorkMode={w}
+      />
     </div>
   );
 }

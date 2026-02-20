@@ -48,10 +48,10 @@ function WorkTopBar({ toggleWorkMode, nickname, connected }) {
         <div className="w-px h-6 bg-slate-200" />
         <button
           onClick={toggleWorkMode}
-          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition text-xs"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium shadow-sm transition text-xs"
           title="切回游戏模式"
         >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M14.25 9.75L16.5 12l-2.25 2.25m-4.5 0L7.5 12l2.25-2.25M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z" />
           </svg>
           <span className="hidden sm:inline">开发模式</span>
@@ -97,18 +97,29 @@ function WorkSidebar({ activeKey }) {
   );
 }
 
-function GameModeToggle({ toggleWorkMode }) {
+function GameModeToggle({ toggleWorkMode, connected }) {
   return (
-    <button
-      onClick={toggleWorkMode}
-      className="fixed top-3 right-24 z-40 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/80 backdrop-blur border border-warm-100 text-warm-300 hover:text-warm-700 hover:border-warm-300 transition shadow-sm text-xs"
-      title="伪装模式"
-    >
-      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
-      </svg>
-      <span className="hidden sm:inline">伪装模式</span>
-    </button>
+    <div className="fixed top-3 right-3 z-40 flex items-center gap-2">
+      <button
+        onClick={toggleWorkMode}
+        className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary-500 hover:bg-primary-600 text-white font-medium shadow-md shadow-primary-500/25 transition text-xs"
+        title="伪装模式"
+      >
+        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
+        </svg>
+        <span className="hidden sm:inline">伪装模式</span>
+      </button>
+      <div
+        className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-colors ${
+          connected
+            ? 'bg-sage-50 border-sage-500/40 text-sage-600'
+            : 'bg-rose-50 border-rose-500/40 text-rose-500'
+        }`}
+      >
+        {connected ? '已连接' : '未连接'}
+      </div>
+    </div>
   );
 }
 
@@ -120,7 +131,7 @@ export default function WorkModeShell({ children }) {
     return (
       <>
         {children}
-        <GameModeToggle toggleWorkMode={toggleWorkMode} />
+        <GameModeToggle toggleWorkMode={toggleWorkMode} connected={state.connected} />
       </>
     );
   }

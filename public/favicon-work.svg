@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563eb"/>
+      <stop offset="100%" stop-color="#1d4ed8"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="url(#bg)"/>
+  <!-- monitor -->
+  <rect x="30" y="28" width="68" height="50" rx="6" fill="white" opacity="0.95"/>
+  <rect x="36" y="34" width="56" height="38" rx="3" fill="#1e40af" opacity="0.15"/>
+  <!-- screen lines -->
+  <rect x="42" y="42" width="30" height="3" rx="1.5" fill="#3b82f6" opacity="0.7"/>
+  <rect x="42" y="49" width="44" height="3" rx="1.5" fill="#3b82f6" opacity="0.45"/>
+  <rect x="42" y="56" width="22" height="3" rx="1.5" fill="#3b82f6" opacity="0.45"/>
+  <rect x="42" y="63" width="36" height="3" rx="1.5" fill="#3b82f6" opacity="0.3"/>
+  <!-- stand -->
+  <rect x="54" y="78" width="20" height="6" rx="1" fill="white" opacity="0.85"/>
+  <rect x="46" y="84" width="36" height="4" rx="2" fill="white" opacity="0.75"/>
+  <!-- EP text -->
+  <text x="64" y="112" text-anchor="middle" font-family="sans-serif" font-weight="bold" font-size="22" fill="white" opacity="0.9">EP</text>
+</svg>
