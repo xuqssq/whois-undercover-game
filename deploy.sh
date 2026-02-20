@@ -44,7 +44,7 @@ ssh "$SERVER" bash --login -s <<'EOF'
 
   cd $REMOTE_DIR
   echo "==> Installing dependencies..."
-  yarn install --production
+  yarn install --production --ignore-engines
 
   echo "==> Starting with pm2..."
   pm2 delete $APP_NAME 2>/dev/null || true
