@@ -6,11 +6,16 @@ REMOTE_DIR="/whois-undercover-game"
 APP_NAME="whois-undercover"
 ARCHIVE="whois-undercover-game.tar.gz"
 
+echo "==> Building frontend..."
+yarn build
+
 echo "==> Packing project..."
 tar czf "/tmp/$ARCHIVE" \
   --exclude='node_modules' \
   --exclude='.git' \
   --exclude='data' \
+  --exclude='src' \
+  --exclude='public' \
   --exclude='.DS_Store' \
   --exclude='.env*' \
   -C "$(dirname "$0")" .

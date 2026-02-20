@@ -1,0 +1,158 @@
+@import "tailwindcss";
+
+@theme {
+  --color-cream: #FFF8F0;
+  --color-cream-50: #FFFDFB;
+  --color-cream-100: #FFF8F0;
+  --color-cream-200: #FEF3E2;
+  --color-cream-300: #F5EDE3;
+
+  --color-primary-50: #FEF0EB;
+  --color-primary-100: #FDEEE8;
+  --color-primary-200: #FBCFC2;
+  --color-primary-500: #E07A5F;
+  --color-primary-600: #C96A52;
+  --color-primary-700: #B25A45;
+
+  --color-sage-50: #F0F7F3;
+  --color-sage-100: #E8F4ED;
+  --color-sage-500: #81B29A;
+  --color-sage-600: #6A9B83;
+
+  --color-amber-50: #FDF9EE;
+  --color-amber-100: #FDF6E3;
+  --color-amber-500: #F2CC8F;
+  --color-amber-600: #E0B870;
+
+  --color-rose-50: #FDF0EF;
+  --color-rose-100: #FDE8E6;
+  --color-rose-500: #D4726A;
+
+  --color-warm-900: #3D3229;
+  --color-warm-700: #5C4F43;
+  --color-warm-500: #8B7E74;
+  --color-warm-300: #B8ADA3;
+  --color-warm-100: #E8DDD1;
+
+  --font-serif: "Noto Serif SC", serif;
+  --font-sans: "Noto Sans SC", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Noto Sans SC", sans-serif;
+  background: #fff8f0;
+  color: #3d3229;
+  overflow: hidden;
+}
+
+.scroll-thin::-webkit-scrollbar {
+  width: 5px;
+}
+.scroll-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scroll-thin::-webkit-scrollbar-thumb {
+  background: rgba(139, 126, 116, 0.3);
+  border-radius: 999px;
+}
+
+.bg-dots {
+  background-image: radial-gradient(circle, #e8ddd1 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Flip card */
+.flip-container {
+  perspective: 800px;
+}
+.flip-card {
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+.flip-card.flipped {
+  transform: rotateY(180deg);
+}
+.flip-face {
+  backface-visibility: hidden;
+  position: absolute;
+  inset: 0;
+}
+.flip-back {
+  transform: rotateY(180deg);
+}
+
+/* Animations */
+@keyframes speakerPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(224, 122, 95, 0.35); }
+  50% { box-shadow: 0 0 0 8px rgba(224, 122, 95, 0); }
+}
+@keyframes bubbleIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.93); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes toastOut {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(12px); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes dotPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.animate-bubble {
+  animation: bubbleIn 0.25s ease-out both;
+}
+.animate-modal {
+  animation: modalIn 0.3s ease-out both;
+}
+.animate-toast-in {
+  animation: toastIn 0.3s ease-out both;
+}
+.animate-toast-out {
+  animation: toastOut 0.3s ease-in both;
+}
+.animate-fade {
+  animation: fadeIn 0.3s ease-out both;
+}
+.animate-pulse-speaker {
+  animation: speakerPulse 2s ease-in-out infinite;
+}
+
+.btn-lift {
+  transition: all 0.2s ease;
+}
+.btn-lift:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+.btn-lift:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Three.js canvas layer */
+#three-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+#root {
+  position: relative;
+  z-index: 10;
+}

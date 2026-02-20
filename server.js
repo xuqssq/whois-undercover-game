@@ -473,7 +473,7 @@ function transferHost(game) {
 // ==== Express + WebSocket ====
 const app = express();
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'dist')));
 
 // 创建游戏
 app.post('/api/games', (req, res) => {
