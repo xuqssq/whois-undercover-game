@@ -1,8 +1,10 @@
 import { useReducer, useMemo } from 'react';
 import { GameContext, initialState, reducer } from './context/GameContext';
+import { WorkModeProvider } from './context/WorkModeContext';
 import { useWebSocket } from './hooks/useWebSocket';
 import { useApi } from './hooks/useApi';
 import { useThreeScene } from './hooks/useThreeScene';
+import WorkModeShell from './components/WorkModeShell';
 import LobbyView from './components/LobbyView';
 import GameView from './components/GameView';
 import ConnectionBadge from './components/ConnectionBadge';
@@ -18,10 +20,14 @@ export default function App() {
     [state, ws, api],
   );
   return (
-    <GameContext.Provider value={ctx}>
-      {state.screen === 'lobby' ? <LobbyView /> : <GameView />}
-      <ConnectionBadge connected={state.connected} />
-      <Toast />
-    </GameContext.Provider>
+    <WorkModeProvider>
+      <GameContext.Provider value={ctx}>
+        <WorkModeShell>
+          {state.screen === 'lobby' ? <LobbyView /> : <GameView />}
+        </WorkModeShell>
+        <ConnectionBadge connected={state.connected} />
+        <Toast />
+      </GameContext.Provider>
+    </WorkModeProvider>
   );
 }

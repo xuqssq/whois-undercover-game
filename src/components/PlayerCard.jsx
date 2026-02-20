@@ -1,4 +1,5 @@
 import PlayerAvatar from './PlayerAvatar';
+import { useWorkMode } from '../context/WorkModeContext';
 
 export default function PlayerCard({
   player,
@@ -13,6 +14,8 @@ export default function PlayerCard({
   onKick,
   voteStatus,
 }) {
+  const { isWorkMode: w } = useWorkMode();
+
   return (
     <div
       className={`flex items-center justify-between rounded-xl px-3 py-2.5 transition-all ${
@@ -41,27 +44,27 @@ export default function PlayerCard({
             </span>
             {isHost && (
               <span className="px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-600 text-[10px] font-medium">
-                房主
+                {w ? '负责人' : '房主'}
               </span>
             )}
             {isSpeaking && (
               <span className="px-1.5 py-0.5 rounded-md bg-primary-100 text-primary-600 text-[10px] font-medium">
-                发言中
+                {w ? '汇报中' : '发言中'}
               </span>
             )}
             {voteStatus === 'voted' && (
               <span className="px-1.5 py-0.5 rounded-md bg-sage-100 text-sage-600 text-[10px] font-medium">
-                已投票
+                {w ? '已评审' : '已投票'}
               </span>
             )}
             {voteStatus === 'pending' && (
               <span className="px-1.5 py-0.5 rounded-md bg-warm-100 text-warm-400 text-[10px] font-medium">
-                投票中
+                {w ? '评审中' : '投票中'}
               </span>
             )}
           </div>
           {!player.alive && (
-            <span className="text-[10px] text-warm-300">已淘汰</span>
+            <span className="text-[10px] text-warm-300">{w ? '已离线' : '已淘汰'}</span>
           )}
         </div>
       </div>
@@ -76,7 +79,7 @@ export default function PlayerCard({
                 : 'bg-cream-200 text-warm-700 hover:bg-amber-100 hover:text-amber-600'
             }`}
           >
-            {isVoteTarget ? '已投' : '投票'}
+            {isVoteTarget ? (w ? '已评审' : '已投') : (w ? '评审' : '投票')}
           </button>
         )}
         {canKick && (
@@ -84,7 +87,7 @@ export default function PlayerCard({
             onClick={() => onKick(player.id)}
             className="px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition text-rose-400 hover:bg-rose-50 hover:text-rose-500"
           >
-            踢出
+            {w ? '移出' : '踢出'}
           </button>
         )}
       </div>

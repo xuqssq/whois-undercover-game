@@ -1,11 +1,18 @@
 import PlayerAvatar from './PlayerAvatar';
 import { fmtTime } from '../utils/constants';
+import { useWorkMode } from '../context/WorkModeContext';
 
 export default function ChatBubble({ msg, isSelf, playerIndex }) {
+  const { isWorkMode: w } = useWorkMode();
+
   if (msg.playerId === 'system') {
     return (
       <div className="flex justify-center my-2 animate-bubble">
-        <div className="bg-amber-50 border border-amber-500/20 rounded-full px-3 py-1 text-[11px] text-amber-600 max-w-[85%] text-center">
+        <div className={`rounded-full px-3 py-1 text-[11px] max-w-[85%] text-center border ${
+          w
+            ? 'bg-blue-50 border-blue-200 text-blue-600'
+            : 'bg-amber-50 border-amber-500/20 text-amber-600'
+        }`}>
           {msg.text}
         </div>
       </div>

@@ -1,11 +1,21 @@
 import { Fragment } from 'react';
+import { useWorkMode } from '../context/WorkModeContext';
 
 export default function PhaseIndicator({ phase, status }) {
-  const steps = [
-    { key: 'waiting', label: '等待' },
-    { key: 'speaking', label: '发言' },
-    { key: 'voting', label: '投票' },
-  ];
+  const { isWorkMode: w } = useWorkMode();
+
+  const steps = w
+    ? [
+        { key: 'waiting', label: '规划' },
+        { key: 'speaking', label: '汇报' },
+        { key: 'voting', label: '评审' },
+      ]
+    : [
+        { key: 'waiting', label: '等待' },
+        { key: 'speaking', label: '发言' },
+        { key: 'voting', label: '投票' },
+      ];
+
   const currentIdx =
     status === 'ended' ? 3 : steps.findIndex((s) => s.key === phase);
 
@@ -41,7 +51,7 @@ export default function PhaseIndicator({ phase, status }) {
         <>
           <div className="w-5 h-0.5 rounded bg-rose-500" />
           <div className="px-2 py-0.5 rounded-full text-xs font-medium bg-rose-500 text-white">
-            结束
+            {w ? '结项' : '结束'}
           </div>
         </>
       )}

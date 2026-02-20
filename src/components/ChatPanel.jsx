@@ -1,10 +1,12 @@
 import { useContext, useState, useMemo } from 'react';
 import { GameContext } from '../context/GameContext';
+import { useWorkMode } from '../context/WorkModeContext';
 import { useAutoScroll } from '../hooks/useAutoScroll';
 import ChatBubble from './ChatBubble';
 
 export default function ChatPanel() {
   const { state, ws } = useContext(GameContext);
+  const { isWorkMode: w } = useWorkMode();
   const [text, setText] = useState('');
   const messages = useMemo(
     () => (state.chat || []).slice().sort((a, b) => a.ts - b.ts),
@@ -23,11 +25,11 @@ export default function ChatPanel() {
     amDead || (isSpeakingPhase && state.currentSpeakerId && !isMyTurn);
 
   function getPlaceholder() {
-    if (amDead) return '你已出局，无法发言';
-    if (isMyTurn) return '描述你的词语...（发送后自动结束发言）';
-    if (isSpeakingPhase) return '等待其他玩家发言...';
-    if (state.phase === 'voting') return '自由讨论...';
-    return '发送消息...';
+    if (amDead) return w ? '你已离线，无法发言' : '你已出局，无法发言';
+    if (isMyTurn) return w ? '输入工作汇报...（发送后结束汇报）' : '描述你的词语...（发送后自动结束发言）';
+    if (isSpeakingPhase) return w ? '等待其他成员汇报...' : '等待其他玩家发言...';
+    if (state.phase === 'voting') return w ? '讨论评审意见...' : '自由讨论...';
+    return w ? '发送消息...' : '发送消息...';
   }
 
   function handleSend() {
@@ -48,18 +50,18 @@ export default function ChatPanel() {
     (p) => p.id === state.currentSpeakerId,
   );
   const turnHint = isMyTurn
-    ? '轮到你发言了!'
+    ? (w ? '轮到你汇报了!' : '轮到你发言了!')
     : isSpeakingPhase && currentSpeaker
-      ? `等待 ${currentSpeaker.name} 发言...`
+      ? (w ? `等待 ${currentSpeaker.name} 汇报...` : `等待 ${currentSpeaker.name} 发言...`)
       : state.phase === 'voting'
-        ? '投票阶段，请在左侧选择投票'
+        ? (w ? '评审阶段，请在左侧选择评审' : '投票阶段，请在左侧选择投票')
         : null;
 
   return (
     <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-sm border border-white/50 p-4 flex flex-col min-h-0 overflow-hidden">
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-xs font-semibold text-warm-500 uppercase tracking-wider">
-          聊天
+          {w ? '工作沟通' : '聊天'}
         </h3>
         {turnHint && (
           <span
@@ -79,7 +81,7 @@ export default function ChatPanel() {
       >
         {messages.length === 0 && (
           <div className="text-xs text-warm-300 text-center py-8">
-            暂无消息
+            {w ? '暂无消息' : '暂无消息'}
           </div>
         )}
         {messages.map((m, i) => (

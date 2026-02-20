@@ -1,7 +1,9 @@
-import { getAvatarColor } from '../utils/constants';
+import { avatarColorFromName } from '../utils/constants';
+import { useWorkMode } from '../context/WorkModeContext';
 
 export default function PlayerAvatar({ name, index, size = 'md', alive = true }) {
-  const color = getAvatarColor(index);
+  const { isWorkMode } = useWorkMode();
+  const color = avatarColorFromName(name, isWorkMode);
   const sizes = {
     sm: 'w-7 h-7 text-xs',
     md: 'w-9 h-9 text-sm',

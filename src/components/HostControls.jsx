@@ -1,8 +1,10 @@
 import { useContext } from 'react';
 import { GameContext } from '../context/GameContext';
+import { useWorkMode } from '../context/WorkModeContext';
 
 export default function HostControls() {
   const { state, api, dispatch } = useContext(GameContext);
+  const { isWorkMode: w } = useWorkMode();
   const isHost = state.playerId === state.hostId;
   if (!isHost) return null;
 
@@ -47,7 +49,7 @@ export default function HostControls() {
     <div className="flex items-center gap-2">
       {canChangeSetting && (
         <div className="flex items-center gap-1.5">
-          <span className="text-xs text-warm-500">卧底</span>
+          <span className="text-xs text-warm-500">{w ? '评审员' : '卧底'}</span>
           <div className="flex rounded-lg border border-warm-100 overflow-hidden">
             {[1, 2, 3].map((n) => (
               <button
@@ -66,7 +68,7 @@ export default function HostControls() {
           onClick={handleReroll}
           className="btn-lift rounded-xl border-2 border-warm-100 text-warm-500 hover:border-primary-500 hover:text-primary-500 px-4 py-2 text-sm font-medium transition"
         >
-          更换词语
+          {w ? '更新任务' : '更换词语'}
         </button>
       )}
       {isWaitingOrEnded && (
@@ -76,8 +78,8 @@ export default function HostControls() {
           className="btn-lift rounded-xl bg-primary-500 hover:bg-primary-600 text-white px-5 py-2 text-sm font-medium shadow-md shadow-primary-500/25 disabled:opacity-50 transition"
         >
           {state.status === 'ended'
-            ? '再来一局'
-            : `开始游戏${!canStart ? ` (需${minPlayers}人)` : ''}`}
+            ? (w ? '新建迭代' : '再来一局')
+            : `${w ? '启动迭代' : '开始游戏'}${!canStart ? ` (需${minPlayers}人)` : ''}`}
         </button>
       )}
     </div>

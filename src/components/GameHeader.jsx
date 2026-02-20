@@ -1,9 +1,11 @@
 import { useContext, useState } from 'react';
 import { GameContext } from '../context/GameContext';
+import { useWorkMode } from '../context/WorkModeContext';
 import PhaseIndicator from './PhaseIndicator';
 
 export default function GameHeader() {
   const { state, dispatch, api } = useContext(GameContext);
+  const { isWorkMode: w } = useWorkMode();
   const [copied, setCopied] = useState(false);
 
   function copyRoomId() {
@@ -13,7 +15,7 @@ export default function GameHeader() {
         .writeText(text)
         .then(() => {
           setCopied(true);
-          dispatch({ type: 'ADD_TOAST', payload: '房间号已复制' });
+          dispatch({ type: 'ADD_TOAST', payload: w ? '项目编号已复制' : '房间号已复制' });
           setTimeout(() => setCopied(false), 2000);
         })
         .catch(fallbackCopy);
@@ -29,7 +31,7 @@ export default function GameHeader() {
       document.execCommand('copy');
       document.body.removeChild(ta);
       setCopied(true);
-      dispatch({ type: 'ADD_TOAST', payload: '房间号已复制' });
+      dispatch({ type: 'ADD_TOAST', payload: w ? '项目编号已复制' : '房间号已复制' });
       setTimeout(() => setCopied(false), 2000);
     }
   }
@@ -53,7 +55,7 @@ export default function GameHeader() {
             className="flex items-center gap-1.5 cursor-pointer group"
             onClick={copyRoomId}
           >
-            <span className="text-xs text-warm-500">房间</span>
+            <span className="text-xs text-warm-500">{w ? '项目' : '房间'}</span>
             <span className="font-mono text-sm font-medium text-warm-900 group-hover:text-primary-500 transition">
               {state.gameId}
             </span>
@@ -70,15 +72,15 @@ export default function GameHeader() {
           </div>
           <div className="h-4 w-px bg-warm-100" />
           <span className="text-xs text-warm-500">
-            第{' '}
-            <span className="font-medium text-warm-700">{state.round}</span>{' '}
-            轮
+            {w ? 'Sprint ' : '第 '}
+            <span className="font-medium text-warm-700">{state.round}</span>
+            {w ? '' : ' 轮'}
           </span>
           {hostPlayer && (
             <>
               <div className="h-4 w-px bg-warm-100" />
               <span className="text-xs text-warm-500">
-                房主:{' '}
+                {w ? '负责人' : '房主'}:{' '}
                 <span className="font-medium text-warm-700">
                   {hostPlayer.name}
                 </span>
