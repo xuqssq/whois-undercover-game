@@ -8,6 +8,12 @@ export function useApi(dispatch) {
 
   return useMemo(
     () => ({
+      async listRooms() {
+        const res = await fetch('/api/games');
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || '获取房间列表失败');
+        return data;
+      },
       async createGame() {
         const res = await fetch('/api/games', {
           method: 'POST',

@@ -632,6 +632,19 @@ app.post('/api/games/:id/reroll-words', (req, res) => {
   }
 });
 
+// 列出所有可加入的房间
+app.get('/api/games', (req, res) => {
+  const list = Object.values(games)
+    .filter((g) => g.status !== 'ended')
+    .map((g) => ({
+      id: g.id,
+      status: g.status,
+      playerCount: Object.keys(g.players).length,
+      playerNames: Object.values(g.players).map((p) => p.name),
+    }));
+  res.json(list);
+});
+
 // 获取游戏状态
 app.get('/api/games/:id', (req, res) => {
   const game = games[req.params.id];

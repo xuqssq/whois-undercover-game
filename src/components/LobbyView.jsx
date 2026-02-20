@@ -15,10 +15,14 @@ export default function LobbyView() {
   const [joinId, setJoinId] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [rooms, setRooms] = useState(null);
+  const [roomsLoading, setRoomsLoading] = useState(false);
+
+  const w = isWorkMode;
 
   async function handleCreate() {
     if (!nickname.trim()) {
-      setError(isWorkMode ? '请输入姓名' : '请输入昵称');
+      setError(w ? '请输入姓名' : '请输入昵称');
       return;
     }
     setError('');
@@ -35,19 +39,20 @@ export default function LobbyView() {
     setLoading(false);
   }
 
-  async function handleJoin() {
+  async function handleJoin(id) {
+    const gameId = id || joinId.trim();
     if (!nickname.trim()) {
-      setError(isWorkMode ? '请输入姓名' : '请输入昵称');
+      setError(w ? '请输入姓名' : '请输入昵称');
       return;
     }
-    if (!joinId.trim()) {
-      setError(isWorkMode ? '请输入项目编号' : '请输入房间号');
+    if (!gameId) {
+      setError(w ? '请输入项目编号' : '请输入房间号');
       return;
     }
     setError('');
     setLoading(true);
     try {
-      const data = await api.joinGame(joinId.trim(), nickname.trim());
+      const data = await api.joinGame(gameId, nickname.trim());
       dispatch({ type: 'SET_NICKNAME', payload: nickname.trim() });
       localStorage.setItem('wis_nickname', nickname.trim());
       dispatch({ type: 'JOIN_SUCCESS', payload: data });
@@ -57,7 +62,33 @@ export default function LobbyView() {
     setLoading(false);
   }
 
-  const w = isWorkMode;
+  async function handleListRooms() {
+    if (rooms !== null) {
+      setRooms(null);
+      return;
+    }
+    setRoomsLoading(true);
+    try {
+      const list = await api.listRooms();
+      setRooms(list);
+    } catch (e) {
+      setError(e.message);
+    }
+    setRoomsLoading(false);
+  }
+
+  async function handleRefreshRooms() {
+    setRoomsLoading(true);
+    try {
+      const list = await api.listRooms();
+      setRooms(list);
+    } catch (e) {
+      setError(e.message);
+    }
+    setRoomsLoading(false);
+  }
+
+  const STATUS_MAP = { waiting: '等待中', playing: '进行中' };
 
   return (
     <div className={`${w ? 'min-h-full' : 'min-h-screen'} flex items-center justify-center p-4`}>
@@ -94,7 +125,7 @@ export default function LobbyView() {
               disabled={loading}
               className="w-full btn-lift rounded-xl bg-primary-500 hover:bg-primary-600 text-white font-medium py-2.5 text-sm shadow-md shadow-primary-500/25 disabled:opacity-50 transition"
             >
-              {loading ? (w ? '创建中...' : '创建中...') : (w ? '创建新项目' : '创建新房间')}
+              {loading ? '创建中...' : (w ? '创建新项目' : '创建新房间')}
             </button>
             <div className="flex items-center gap-3">
               <div className="flex-1 h-px bg-warm-100"></div>
@@ -114,7 +145,7 @@ export default function LobbyView() {
                   onKeyDown={(e) => e.key === 'Enter' && handleJoin()}
                 />
                 <button
-                  onClick={handleJoin}
+                  onClick={() => handleJoin()}
                   disabled={loading}
                   className="btn-lift rounded-xl border-2 border-primary-500 text-primary-500 hover:bg-primary-50 font-medium px-4 py-2.5 text-sm disabled:opacity-50 transition"
                 >
@@ -122,6 +153,75 @@ export default function LobbyView() {
                 </button>
               </div>
             </div>
+
+            <button
+              onClick={handleListRooms}
+              disabled={roomsLoading}
+              className="w-full flex items-center justify-center gap-1.5 rounded-xl border border-warm-100 hover:border-warm-200 bg-cream-50 hover:bg-warm-50 text-warm-500 hover:text-warm-700 font-medium py-2.5 text-sm transition disabled:opacity-50"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+              </svg>
+              {roomsLoading ? '加载中...' : rooms !== null ? '收起列表' : (w ? '浏览已有项目' : '浏览房间列表')}
+            </button>
+
+            {rooms !== null && (
+              <div className="rounded-xl border border-warm-100 bg-cream-50 overflow-hidden">
+                <div className="flex items-center justify-between px-3 py-2 border-b border-warm-100">
+                  <span className="text-xs font-medium text-warm-500">
+                    {w ? '项目列表' : '房间列表'} ({rooms.length})
+                  </span>
+                  <button
+                    onClick={handleRefreshRooms}
+                    disabled={roomsLoading}
+                    className="text-xs text-primary-500 hover:text-primary-600 transition disabled:opacity-50"
+                  >
+                    刷新
+                  </button>
+                </div>
+                {rooms.length === 0 ? (
+                  <div className="px-3 py-6 text-center text-xs text-warm-300">
+                    {w ? '暂无项目，创建一个吧' : '暂无房间，创建一个吧'}
+                  </div>
+                ) : (
+                  <div className="max-h-48 overflow-y-auto divide-y divide-warm-100/60">
+                    {rooms.map((room) => (
+                      <div
+                        key={room.id}
+                        className="flex items-center justify-between px-3 py-2.5 hover:bg-warm-50/60 transition"
+                      >
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-mono font-medium text-warm-700">{room.id}</span>
+                            <span className={`text-[10px] px-1.5 py-0.5 rounded-full border ${
+                              room.status === 'waiting'
+                                ? 'bg-green-50 border-green-200 text-green-600'
+                                : 'bg-amber-50 border-amber-200 text-amber-600'
+                            }`}>
+                              {STATUS_MAP[room.status] || room.status}
+                            </span>
+                          </div>
+                          <div className="text-[11px] text-warm-400 mt-0.5 truncate">
+                            {room.playerNames.length > 0
+                              ? room.playerNames.join('、')
+                              : '暂无玩家'}
+                            {' · '}{room.playerCount}{w ? '人' : '人'}
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => handleJoin(room.id)}
+                          disabled={loading}
+                          className="shrink-0 ml-2 text-xs px-3 py-1.5 rounded-lg bg-primary-500 hover:bg-primary-600 text-white font-medium transition disabled:opacity-50"
+                        >
+                          加入
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
             {error && (
               <div className="rounded-xl bg-rose-50 border border-rose-500/30 px-3 py-2 text-xs text-rose-500">
                 {error}
