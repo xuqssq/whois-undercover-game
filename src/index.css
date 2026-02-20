@@ -115,6 +115,9 @@ body {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.4; }
 }
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
 
 .animate-bubble {
   animation: bubbleIn 0.25s ease-out both;
@@ -130,6 +133,9 @@ body {
 }
 .animate-fade {
   animation: fadeIn 0.3s ease-out both;
+}
+.animate-spin {
+  animation: spin 1s linear infinite;
 }
 .animate-pulse-speaker {
   animation: speakerPulse 2s ease-in-out infinite;
